@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:e_vote/backend/Candidate.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/contracts.dart';
@@ -34,17 +36,20 @@ is used to call the constructor of DeployedContract()
 
 */
 
-class Election {
-  String rpcUrl = 'http://192.168.0.12:7545';
-  String wsUrl = 'ws://://192.168.0.12:7545';
-  String privateKey =
-      'db9aa287b49efed1f9aa7e8c1a2905e89398961e80511a1d8b18431a115e32cd';
-
+class Election extends ChangeNotifier {
+  final String rpcUrl = 'http://192.168.0.12:7545';
+  final String wsUrl = 'ws://://192.168.0.12:7545';
+  final String privateKey =
+      'e6f261e81b7e70c9012d86e5ba6d03c62fa1dcbc13060701c2f8115735b94f2a';
+  final String secondKey =
+      '2c2185a2dbcfb803ad01fae71bd34916c4a0d469a52fec6c0d6c126195f2d3f1';
   EthereumAddress masterAddress;
   EthereumAddress electionAddress;
+  EthereumAddress secondAddress;
   DeployedContract electionContract;
   Web3Client web3client;
   Credentials masterCredentials;
+  Credentials secondCredentials;
   dynamic jsonAbi;
   String abiCode;
 
@@ -52,7 +57,7 @@ class Election {
   Election() {
     setUp();
   }
-  
+
   // Steps 1-5
   Future<void> setUp() async {
     web3client = Web3Client(rpcUrl, Client(),
@@ -60,13 +65,17 @@ class Election {
             IOWebSocketChannel.connect(wsUrl).cast<String>());
     masterCredentials = await web3client.credentialsFromPrivateKey(privateKey);
     masterAddress = await masterCredentials.extractAddress();
+    secondCredentials = await web3client.credentialsFromPrivateKey(secondKey);
+    secondAddress = await secondCredentials.extractAddress();
     await getAbi();
     await getDeployedContract();
+    await electionContractConstructor(secondAddress.toString());
   }
 
   // Steps 6-7
   Future<void> getAbi() async {
-    final String abiString = await rootBundle.loadString('src/abis/Election.json');
+    final String abiString =
+        await rootBundle.loadString('src/abis/Election.json');
     jsonAbi = json.decode(abiString);
     abiCode = json.encode(jsonAbi['abi']);
     electionAddress =
@@ -76,6 +85,194 @@ class Election {
   //Step 8
   Future<void> getDeployedContract() async {
     electionContract = DeployedContract(
-        ContractAbi.fromJson(abiCode, 'Election'), electionAddress);    
+        ContractAbi.fromJson(abiCode, 'Election'), electionAddress);
+  }
+
+  Future<void> electionContractConstructor(String adminAddress) async {
+    print('lol');
+    ContractFunction getAdmin = electionContract.function('getAdmin');
+    ContractFunction setAdmin = electionContract.function('setManager');
+    EthereumAddress address = EthereumAddress.fromHex(adminAddress);
+    print(address.toString());
+    final String res1 = await web3client.sendTransaction(
+        secondCredentials,
+        Transaction.callContract(
+            from: secondAddress,
+            contract: electionContract,
+            function: setAdmin,
+            parameters: <dynamic>[address]));
+    final List<dynamic> res = await web3client.call(
+        contract: electionContract, function: getAdmin, params: <dynamic>[]);
+    print(res.toString());
+    // notifyListeners();
+  }
+
+  Future<void> addCandidate(
+      String name, String proposal, String adminPrivateKey) async {
+    ContractFunction addCandidate = electionContract.function('addCandidate');
+    final Credentials adminCredentials =
+        await web3client.credentialsFromPrivateKey(adminPrivateKey);
+    final EthereumAddress adminAddress =
+        await adminCredentials.extractAddress();
+    final String response = await web3client.sendTransaction(
+        adminCredentials,
+        Transaction.callContract(
+            from: adminAddress,
+            maxGas: 1000000,
+            contract: electionContract,
+            function: addCandidate,
+            parameters: <dynamic>[name, proposal]));
+    print(response.toString());
+  }
+
+  Future<void> addVoter(String address, String adminPrivateKey) async {
+    ContractFunction addVoter = electionContract.function('addVoter');
+    final Credentials adminCredentials =
+        await web3client.credentialsFromPrivateKey(adminPrivateKey);
+    final EthereumAddress adminAddress =
+        await adminCredentials.extractAddress();
+    final EthereumAddress voterAddress = EthereumAddress.fromHex(address);
+    final String response = await web3client.sendTransaction(
+        adminCredentials,
+        Transaction.callContract(
+            from: adminAddress,
+            maxGas: 1000000,
+            contract: electionContract,
+            function: addVoter,
+            parameters: <dynamic>[voterAddress]));
+    print(response.toString());
+  }
+
+  Future<void> startElection(String adminPrivateKey) async {
+    ContractFunction startElection = electionContract.function('startElection');
+    final Credentials adminCredentials =
+        await web3client.credentialsFromPrivateKey(adminPrivateKey);
+    final EthereumAddress adminAddress =
+        await adminCredentials.extractAddress();
+    final String response = await web3client.sendTransaction(
+        adminCredentials,
+        Transaction.callContract(
+            from: adminAddress,
+            maxGas: 1000000,
+            contract: electionContract,
+            function: startElection,
+            parameters: <dynamic>[]));
+    print(response.toString());
+  }
+
+  Future<void> endElection(String adminPrivateKey) async {
+    ContractFunction endElection = electionContract.function('endElection');
+    final Credentials adminCredentials =
+        await web3client.credentialsFromPrivateKey(adminPrivateKey);
+    final EthereumAddress adminAddress =
+        await adminCredentials.extractAddress();
+    final String response = await web3client.sendTransaction(
+        adminCredentials,
+        Transaction.callContract(
+            from: adminAddress,
+            maxGas: 1000000,
+            contract: electionContract,
+            function: endElection,
+            parameters: <dynamic>[]));
+    print(response.toString());
+  }
+
+  Future<List<Candidate>> displayCandidates(String adminPrivateKey) async {
+    ContractFunction displayCandidates =
+        electionContract.function('displayCandidate');
+    final Credentials adminCredentials =
+        await web3client.credentialsFromPrivateKey(adminPrivateKey);
+    final EthereumAddress adminAddress =
+        await adminCredentials.extractAddress();
+
+    ContractFunction candidateCount =
+        electionContract.function('candidate_count');
+    final candidate_Count = await web3client.call(
+        contract: electionContract,
+        function: candidateCount,
+        params: <dynamic>[]);
+    List<dynamic> candidate;
+    List<Candidate> listOfCandididates = [];
+    int total = candidate_Count[0].toInt();
+    for (int i = 0; i < total; i++) {
+      candidate = await web3client.call(
+          contract: electionContract,
+          function: displayCandidates,
+          params: <dynamic>[BigInt.from(i)]);
+      listOfCandididates.add(Candidate(
+          id: candidate[0].toInt(),
+          name: candidate[0].toString(),
+          proposal: candidate[0].toString()));
+    }
+    return listOfCandididates;
+  }
+
+  Future<String> showWinner(String adminPrivateKey) async {
+    ContractFunction showWinner = electionContract.function('showWinner');
+    final Credentials adminCredentials =
+        await web3client.credentialsFromPrivateKey(adminPrivateKey);
+    final EthereumAddress adminAddress =
+        await adminCredentials.extractAddress();
+    final response = await web3client.call(
+        contract: electionContract, function: showWinner, params: <dynamic>[]);
+    final String winnerName = response[0];
+    return winnerName;
+  }
+
+  Future<void> delegateVote(
+      String voterPrivateKey, String delegateAddress) async {
+    ContractFunction delegateVote = electionContract.function('delegateVote');
+    final Credentials voterCredentials =
+        await web3client.credentialsFromPrivateKey(voterPrivateKey);
+    final EthereumAddress voterAddress =
+        await voterCredentials.extractAddress();
+    final String response = await web3client.sendTransaction(
+        voterCredentials,
+        Transaction.callContract(
+            from: voterAddress,
+            maxGas: 1000000,
+            contract: electionContract,
+            function: delegateVote,
+            parameters: <dynamic>[delegateAddress]));
+  }
+
+  Future<void> vote(String voterPrivateKey, int candidateID) async {
+    ContractFunction vote = electionContract.function('vote');
+    final Credentials voterCredentials =
+        await web3client.credentialsFromPrivateKey(voterPrivateKey);
+    final EthereumAddress voterAddress =
+        await voterCredentials.extractAddress();
+    final String response = await web3client.sendTransaction(
+        voterCredentials,
+        Transaction.callContract(
+            from: voterAddress,
+            maxGas: 1000000,
+            contract: electionContract,
+            function: vote,
+            parameters: <dynamic>[BigInt.from(candidateID)]));
+  }
+
+  Future<List<Candidate>> showResults() async {
+    ContractFunction showResults = electionContract.function('showResults');
+    ContractFunction candidateCount =
+        electionContract.function('candidate_count');
+    final candidate_Count = await web3client.call(
+        contract: electionContract,
+        function: candidateCount,
+        params: <dynamic>[]);
+    List<dynamic> candidate;
+    List<Candidate> listOfCandididates = [];
+    int total = candidate_Count[0].toInt();
+    for (int i = 1; i <= total; i++) {
+      candidate = await web3client.call(
+          contract: electionContract,
+          function: showResults,
+          params: <dynamic>[BigInt.from(i)]);
+      listOfCandididates.add(Candidate(
+          id: candidate[0].toInt(),
+          name: candidate[0].toString(),
+          proposal: candidate[0].toString()));
+    }
+    return listOfCandididates;
   }
 }

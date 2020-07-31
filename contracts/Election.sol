@@ -20,7 +20,7 @@ contract Election {
     mapping(uint256 => Candidate) private candidates; // ID of candidate mapped to the candidate struct - To view details of all registered candidates
     mapping(uint256 => uint256) private voteCount; // ID of the candidate mapped to the votes of the candidate privately
 
-    address admin; // The address of the official/authority conducting the election
+    address  admin; // The address of the official/authority conducting the election
 
     enum State {CREATED, ONGOING, STOP}
     /*This enum represents the state of the election -
@@ -115,10 +115,18 @@ contract Election {
 
     // Initialization
     constructor() public {
-        admin = msg.sender;
         electionState = State.CREATED; // Setting Eection state to CREATED
     }
 
+    function getAdmin() public view returns (address)
+    {
+        return admin;
+    }
+
+    function setManager(address manager) public
+    {
+        admin = msg.sender;
+    }
     // To Add a candidate
     // Only admin can add and
     // candidate can be added only before election starts
