@@ -1,51 +1,58 @@
+import 'package:e_vote/features/auth/data/user_repository.dart';
+import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_events.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'backend/Election.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'features/auth/presentation/bloc/auth_bloc/auth_states.dart';
+import 'features/auth/presentation/screens/Login_Screen.dart';
+import 'features/auth/presentation/screens/home_screen.dart';
+import 'features/auth/presentation/screens/splash_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(HomePage());
 }
 
-class MyApp extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final UserRepository _userRepository = UserRepository();
+  AuthBloc _authBloc;
+
+  //An instance of user_Repository and AuthBloc is created
+  @override
+  void initState() {
+    super.initState();
+    _authBloc = AuthBloc(repository: _userRepository);
+    _authBloc.add(AppStarted());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Election>(
-      create: (BuildContext context) => Election(),
+    // ignore: always_specify_types
+    return BlocProvider(
+      create: (BuildContext context) => _authBloc,
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'E-Vote',
-        home: Home(),
+        home: BlocBuilder<AuthBloc, AuthState>(
+            builder: (BuildContext context, AuthState state) {
+          if (state is AppStarted) return SplashScreen();
+          if (state is Authenticated)
+            return HomeScreen(name: state.displayName);
+          if (state is Unauthenticated)
+            return LoginScreen(userRepository: _userRepository);
+          return Container();
+        }),
       ),
     );
   }
-}
 
-class Home extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  @override
-  Widget build(BuildContext context) {
-    var election = Provider.of<Election>(context);
-    return Scaffold(
-      floatingActionButton: IconButton(icon: Icon(Icons.person), onPressed:() async 
-      {
-        election.addCandidate(
-          'Dhiraj', 
-          'lmao', 
-          '2c2185a2dbcfb803ad01fae71bd34916c4a0d469a52fec6c0d6c126195f2d3f1'
-          );
-      }),
-      appBar: AppBar(
-        title: const Text('E-Vote'),
-      ),
-      body: Container(
-        child: const Center(
-          child: Text('Welcome to E-Vote'),
-        ),
-      ),
-    );
+  void dispose() {
+    _authBloc.close();
+    super.dispose();
   }
 }

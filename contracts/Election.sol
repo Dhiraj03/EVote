@@ -117,6 +117,16 @@ contract Election {
     constructor() public {
         electionState = State.CREATED; // Setting Eection state to CREATED
     }
+ 
+    function checkState() public view returns (string memory)
+    {
+        if(electionState == State.CREATED)
+          return "CREATED";
+        else if(electionState == State.ONGOING)
+          return "ONGOING";
+        else if(electionState == State.STOP)
+          return "STOP";
+    }
 
     function getAdmin() public view returns (address)
     {

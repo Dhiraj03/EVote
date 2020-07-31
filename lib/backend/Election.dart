@@ -40,9 +40,9 @@ class Election extends ChangeNotifier {
   final String rpcUrl = 'http://192.168.0.12:7545';
   final String wsUrl = 'ws://://192.168.0.12:7545';
   final String privateKey =
-      'e6f261e81b7e70c9012d86e5ba6d03c62fa1dcbc13060701c2f8115735b94f2a';
+      '1d52c94496f0c1bf791b703d93a9e3b0d55f704d4f616213846041793e1d2d6c';
   final String secondKey =
-      '2c2185a2dbcfb803ad01fae71bd34916c4a0d469a52fec6c0d6c126195f2d3f1';
+      'aefd8bfc9e9ffb1c9e08fd1baaa13d4d292e1a2c622f10b9897df1ce83d69a8a';
   EthereumAddress masterAddress;
   EthereumAddress electionAddress;
   EthereumAddress secondAddress;
@@ -70,6 +70,7 @@ class Election extends ChangeNotifier {
     await getAbi();
     await getDeployedContract();
     await electionContractConstructor(secondAddress.toString());
+    await getState();
   }
 
   // Steps 6-7
@@ -140,7 +141,15 @@ class Election extends ChangeNotifier {
             contract: electionContract,
             function: addVoter,
             parameters: <dynamic>[voterAddress]));
+
     print(response.toString());
+  }
+
+  Future<void> getState() async {
+    ContractFunction getState = electionContract.function('checkState');
+    final response = await web3client.call(
+        contract: electionContract, function: getState, params: <dynamic>[]);
+    print(response[0]);
   }
 
   Future<void> startElection(String adminPrivateKey) async {
