@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'features/auth/presentation/bloc/auth_bloc/auth_states.dart';
 import 'features/auth/presentation/screens/Login_Screen.dart';
-import 'features/auth/presentation/screens/home_screen.dart';
+import 'home_screen.dart';
 import 'features/auth/presentation/screens/splash_screen.dart';
 
 void main() {
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
             builder: (BuildContext context, AuthState state) {
           if (state is AppStarted) return SplashScreen();
           if (state is Authenticated)
-            return HomeScreen(name: state.displayName);
+            return HomeScreen(userRepository: _userRepository,);
           if (state is Unauthenticated)
             return LoginScreen(userRepository: _userRepository);
           return Container();

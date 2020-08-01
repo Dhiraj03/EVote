@@ -1,4 +1,4 @@
-import 'package:e_vote/features/firestore_repository.dart';
+import 'package:e_vote/features/database/firestore_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -23,7 +23,6 @@ class UserRepository {
     final AuthCredential credential = GoogleAuthProvider.getCredential(
         idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
     await _firebaseAuth.signInWithCredential(credential);
-    firestoreRepository.getUsers();
     return _firebaseAuth.currentUser();
   }
 
@@ -53,6 +52,6 @@ class UserRepository {
 
   // use this to get the UID instead
   Future<String> getUser() async {
-    return (await _firebaseAuth.currentUser()).email;
+    return (await _firebaseAuth.currentUser()).uid;
   }
 }
