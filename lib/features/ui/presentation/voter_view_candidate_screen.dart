@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class ViewCandidateScreen extends StatelessWidget {
   List<Candidate> listOfCandidates;
 
-  ViewCandidateScreen(this.listOfCandidates) {}
+  ViewCandidateScreen(this.listOfCandidates);
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class ViewCandidateScreen extends StatelessWidget {
       child: ListView.builder(
           itemCount: listOfCandidates.length,
           itemBuilder: (BuildContext context, int index) {
-            return new Text(
+            return  Text(
               '${listOfCandidates[index].id}: ${listOfCandidates[index].name} proposes, ${listOfCandidates[index].proposal}',
             );
           }),

@@ -7,7 +7,6 @@ abstract class VoterEvent extends Equatable {
 
 class ViewCandidateClicked extends VoterEvent {
   final String adminKey;
-
   ViewCandidateClicked(this.adminKey) {}
 
   @override

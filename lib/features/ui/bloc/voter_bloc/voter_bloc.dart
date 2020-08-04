@@ -1,11 +1,9 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:e_vote/backend/Candidate.dart';
 import 'package:e_vote/backend/Election.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-
 part 'voter_event.dart';
 part 'voter_state.dart';
 

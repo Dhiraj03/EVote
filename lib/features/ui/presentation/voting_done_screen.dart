@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 class VotingDoneScreen extends StatelessWidget {
   final Election _election = Election();
   String winner = '';
-  final String adminKey;
+  final String privateKey;
   List<Candidate> list;
 
-  VotingDoneScreen(this.adminKey) {}
+  VotingDoneScreen(this.privateKey) {}
 
   void showWinner() async {
-    winner = await _election.showWinner(this.adminKey);
+    winner = await _election.showWinner(this.privateKey);
   }
 
   void showResults() async {

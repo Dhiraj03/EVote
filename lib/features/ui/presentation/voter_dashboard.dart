@@ -27,10 +27,10 @@ class VoterDashboard extends StatelessWidget {
           if (_election.getState() == "CREATED" ||
               _election.getState() == "ONGOING") {
             _firestore
-                .collection("voter")
-                .document(firebaseUser.uid)
-                .get()
-                .then((value) {
+                .collection("users")
+                .where('uid', isEqualTo: firebaseUser.uid)
+                .getDocuments()
+            .then((value) {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -49,7 +49,7 @@ class VoterDashboard extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                              viewCandidatesPressed(value.data["admin key"]);
+                              viewCandidatesPressed(value.documents[0]['privateKey']);
                             },
                           ),
                           IconButton(
@@ -81,7 +81,7 @@ class VoterDashboard extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          delegateCandidatePressed(value.data["voter key"]);
+                          delegateCandidatePressed(value.documents[0]["adminKey"], _delegateAddController.text);
                         },
                       ),
                       SizedBox(
@@ -101,13 +101,14 @@ class VoterDashboard extends StatelessWidget {
                       RaisedButton(
                         color: Colors.blue,
                         child: Text(
-                          'Vote !',
+                          'Vote!',
                           style: TextStyle(
                             color: Colors.white,
                           ),
                         ),
                         onPressed: () {
-                          votePressed(value.data["voter key"]);
+                          final cid = int.parse(_candidateIDController.text);
+                          votePressed(value.documents[0]["privateKey"], cid);
                         },
                       ),
                       SizedBox(
@@ -117,7 +118,7 @@ class VoterDashboard extends StatelessWidget {
                           bloc: _voterBloc,
                           builder: (BuildContext context, VoterState state) {
                             if (state is VoterInitial) {
-                              return Container();
+                              return CircularProgressIndicator();
                             }
                             if (state is ViewCandidate) {
                               return ViewCandidateScreen(
@@ -128,9 +129,8 @@ class VoterDashboard extends StatelessWidget {
                             }
                             if (state is Vote) {
                               return Text(
-                                  'Voted Successfully! Please wait till Election get over!');
+                                  'Voted Successfully! Please wait till Election get over for the results!');
                             }
-                            return Container();
                           }),
                     ],
                   ),
@@ -140,11 +140,9 @@ class VoterDashboard extends StatelessWidget {
           } else {
             _firestore
                 .collection("admin")
-                .document(firebaseUser.uid)
-                .get()
-                .then((value) => VotingDoneScreen(value.data["admin key"]));
+                .where('uid', isEqualTo: firebaseUser.uid).getDocuments()
+                .then((value) => VotingDoneScreen(value.documents[0]["privateKey"]));
           }
-          return Container();
         });
   }
 
@@ -152,12 +150,12 @@ class VoterDashboard extends StatelessWidget {
     _voterBloc.add(ViewCandidateClicked(adminKey));
   }
 
-  void delegateCandidatePressed(String voterKey) {
-    _voterBloc.add(DelegateVoteClicked(voterKey, _delegateAddController.text));
+  void delegateCandidatePressed(String voterKey, String delegateAddress) {
+    _voterBloc.add(DelegateVoteClicked(voterKey, delegateAddress));
   }
 
-  void votePressed(String voterKey) {
-    final cid = int.parse(_candidateIDController.text);
+  void votePressed(String voterKey, int cid) {
+    
     _voterBloc.add(VoteClicked(voterKey, cid));
   }
 
