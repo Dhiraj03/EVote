@@ -4,14 +4,8 @@ import 'dart:convert';
 
 import 'package:e_vote/backend/Candidate.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
-import 'package:http/http.dart';
-import 'package:web3dart/contracts.dart';
-import 'package:web3dart/credentials.dart';
-import 'package:web3dart/crypto.dart';
-import 'package:web3dart/web3dart.dart';
-import 'package:web_socket_channel/io.dart';
 
+// Admin Private Key
 String adminkey='';
 
 
@@ -24,21 +18,21 @@ class _AdminDashboardState extends State<AdminDashboard> {
   final List<String> Address = <String>[];
   final List<String> Key = <String>[];
   final List<String> Proposal = <String>[];
-Election election=Election();
+  
+  Election election = Election();
 
 
   TextEditingController candidateControlleraddress = TextEditingController();
   TextEditingController candidateControllerkey = TextEditingController();
   TextEditingController candidateControllerproposal = TextEditingController();
 
+//TODO 1 : change the empty syntax
   void checkifempty() {
     String text1,text2,text3 ;
-
     // Getting Value From Text Field and Store into String Variable
     text1 = candidateControlleraddress.text ;
     text2 = candidateControllerkey.text ;
     text3 = candidateControllerproposal.text ;
-
     // Checking all TextFields.
     if(text1 == '' || text2 == '' || text3 == '')
     {
@@ -47,17 +41,17 @@ Election election=Election();
 
     }else{
 
-      ;
+      
     }
 
   }
 
 
-  void addCandidatesToList() {
+  void addCandidatesToList(String name, String proposal, String adminKey) {
     setState(() {
-      Address.insert(0, candidateControlleraddress.text);
-      Key.insert(0, candidateControllerkey.text);
-      Proposal.insert(0, candidateControllerproposal.text);
+      Address.add(name);
+      Key.add(adminKey);
+      Proposal.add(proposal);
     });
   }
   bool isNameValid = true;
@@ -98,14 +92,14 @@ Election election=Election();
           Padding(
             padding: EdgeInsets.all(20),
             child: TextField(
-              onChanged: (value){
-                if(regExp.hasMatch(value)){
+              onChanged: (_){
+                if(regExp.hasMatch(candidateControllerkey.text)){
                   isNameValid = true;
                 } else {
                   isNameValid = false;
                 }
                 setState(() {
-
+                   
                 });
               },
               controller: candidateControllerkey,
@@ -136,33 +130,23 @@ Election election=Election();
           RaisedButton(
             child: Text('ADD'),
             onPressed: () async{
-              addCandidatesToList();
-              adminkey=candidateControllerkey.text;
+              addCandidatesToList(candidateControlleraddress.text, candidateControllerproposal.text, candidateControllerkey.text);
+              adminkey = candidateControllerkey.text;
               election.addCandidate(candidateControlleraddress.text,candidateControllerproposal.text , adminkey);
-
-              candidateControllerkey.clear();
               candidateControlleraddress.clear();
               candidateControllerproposal.clear();
-
-
             },
           ),
           SizedBox(height: 15.0),
 
           RaisedButton(
-            child: Text('PROCEED'),
+            child: Text('PROCEED (After adding all candidates)'),
             onPressed: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Thirdroute()));
             },
           ),
-
-
-
-
-
-
           Expanded(
             child: ListView.builder(
                 padding: const EdgeInsets.all(8),
@@ -206,13 +190,12 @@ class _ThirdrouteState extends State<Thirdroute> {
   final List<String> Keyv = <String>[];
   TextEditingController voterControlleraddress = TextEditingController();
   TextEditingController voterControllerkey = TextEditingController();
-  Election election=Election();
+  Election election = Election();
 
   void addvotersToList() {
     setState(() {
-      Addressv.insert(0, voterControlleraddress.text);
-      Keyv.insert(0, voterControllerkey.text);
-
+      Addressv.add(voterControlleraddress.text);
+      Keyv.add(voterControllerkey.text);
     });
   }
 
@@ -261,9 +244,7 @@ class _ThirdrouteState extends State<Thirdroute> {
               onPressed: () async{
                 addvotersToList();
                 election.addVoter(voterControlleraddress.text, adminkey);
-                voterControllerkey.clear();
                 voterControlleraddress.clear();
-
               },
             ),
             SizedBox(height: 20.0),
@@ -276,12 +257,6 @@ class _ThirdrouteState extends State<Thirdroute> {
                     MaterialPageRoute(builder: (context) => Firstroute()));
               },
             ),
-
-
-
-
-
-
             Expanded(
               child: ListView.builder(
                   padding: const EdgeInsets.all(8),
@@ -293,7 +268,7 @@ class _ThirdrouteState extends State<Thirdroute> {
                       color: Colors.deepPurpleAccent,
                       child: Center(
                         child: Text(
-                          ' CANDIDATE ${index+1} :- \n ADDRESS: ${Addressv[index]} \n NAME: ${Keyv[index]}',
+                          ' VOTER ${index+1} :- \n ADDRESS: ${Addressv[index]} \n NAME: ${Keyv[index]}',
                           style: TextStyle(fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,),
