@@ -145,11 +145,14 @@ class Election extends ChangeNotifier {
     print(response.toString());
   }
 
-  Future<void> getState() async {
+  Future<String> getState() async {
     ContractFunction getState = electionContract.function('checkState');
     final response = await web3client.call(
         contract: electionContract, function: getState, params: <dynamic>[]);
     print(response[0]);
+    return response[0];
+
+    //* CREATED ONGOING STOPPED
   }
 
   Future<void> startElection(String adminPrivateKey) async {
