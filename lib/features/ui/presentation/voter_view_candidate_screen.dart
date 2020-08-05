@@ -10,6 +10,7 @@ class ViewCandidateScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: ListView.builder(
+        shrinkWrap: true,
           itemCount: listOfCandidates.length,
           itemBuilder: (BuildContext context, int index) {
             return  Text(

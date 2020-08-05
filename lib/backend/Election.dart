@@ -37,11 +37,11 @@ is used to call the constructor of DeployedContract()
 */
 
 class Election extends ChangeNotifier {
-  final String rpcUrl = 'http://192.168.0.12:7545';
-  final String wsUrl = 'ws://://192.168.0.12:7545';
+  final String rpcUrl = 'http://192.168.0.8:7545';
+  final String wsUrl = 'ws://://192.168.0.8:7545';
   final String privateKey =
-      '7dbaa1e35f179bdba19d2f1e61bbaeb4e38154e51e4af4ab477ba2e849bee98a';
-  
+      '29ec9926814812383d3e267c566b0a3ed87668a29455c257e6da0972162c2066';
+  String state;
   EthereumAddress masterAddress;
   EthereumAddress electionAddress;
   DeployedContract electionContract;
@@ -62,6 +62,7 @@ class Election extends ChangeNotifier {
             IOWebSocketChannel.connect(wsUrl).cast<String>());
     masterCredentials = await web3client.credentialsFromPrivateKey(privateKey);
     masterAddress = await masterCredentials.extractAddress();
+    print('ffs');
     await getAbi();
     await getDeployedContract();
     await electionContractConstructor(masterAddress.toString());
@@ -140,13 +141,15 @@ class Election extends ChangeNotifier {
   }
 
   Future<String> getState() async {
+    print('working?');
     ContractFunction getState = electionContract.function('checkState');
     final response = await web3client.call(
         contract: electionContract, function: getState, params: <dynamic>[]);
-    print(response[0]);
-    return response[0];
+    print('response is' + response.length.toString());
+    print('getState inside Election class' + response[0]);
+    state = response[0];
 
-    //* CREATED ONGOING STOPPED
+    return response[0];
   }
 
   Future<void> startElection(String adminPrivateKey) async {

@@ -15334,12 +15334,13 @@
         }
       },
       "links": {},
-      "address": "0x6B8264B8c4C8Bb21d4326A95282D9747F985EbaE",
-      "transactionHash": "0x2941e2db77f71e32e85a54053d0f13aa82ce473c876a27bd09e83cf52ba0a58a"
+      "address": "0x9De0D1B99b9CD6A74fDc8Be76E48aFE8c33f156D",
+      "transactionHash": "0xf26e4df0c9bf74caff19c5dd37391c703d50ad6ce4c15441312f78773ec6ef93"
     }
   },
   "schemaVersion": "3.2.0",
-  "updatedAt": "2020-08-05T16:21:18.415Z",
+  "updatedAt": "2020-08-05T16:31:57.825Z",
+  "networkType": "ethereum",
   "devdoc": {
     "methods": {}
   },
