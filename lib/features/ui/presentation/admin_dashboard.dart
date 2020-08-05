@@ -16,9 +16,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
   var firebaseUser;
   String privateKey;
 
-  final List<String> voterAddresses = <String>[];
-  final List<String> candidateNames = <String>[];
-  final List<String> candidateProposals = <String>[];
+  final List<String> voterAddresses = [];
+  final List<String> candidateNames = [];
+  final List<String> candidateProposals = [];
 
   TextEditingController _candidateNameController = TextEditingController();
   TextEditingController _candidateProposalController = TextEditingController();
@@ -86,7 +86,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                 child: Text('Add Candidate'),
                                 onPressed: () async {
                                   privateKey =
-                                      value.documents[0]['private key'];
+                                      value.documents[0]['privateKey'];
                                   addCandidatePressed(
                                       _candidateNameController.text,
                                       _candidateProposalController.text,
@@ -123,7 +123,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                 child: Text('Add Voter'),
                                 onPressed: () async {
                                   privateKey =
-                                      value.documents[0]['private key'];
+                                      value.documents[0]['privateKey'];
                                   addVoterPressed(
                                       _voterAddressController.text, privateKey);
                                   _voterAddressController.clear();
@@ -144,7 +144,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                 child: Text('Start Elections'),
                                 onPressed: () async {
                                   privateKey =
-                                      value.documents[0]['private key'];
+                                      value.documents[0]['privateKey'];
                                   electionStatusChanged("START", privateKey);
                                 },
                               ),
@@ -152,7 +152,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                 child: Text('End Elections'),
                                 onPressed: () async {
                                   privateKey =
-                                      value.documents[0]['private key'];
+                                      value.documents[0]['privateKey'];
                                   electionStatusChanged("STOP", privateKey);
                                 },
                               ),

@@ -17,7 +17,7 @@ class AddCandidateOrVoter extends AdminState {
 class HandleElectionStatus extends AdminState {
   final String status;
 
-  HandleElectionStatus(this.status) {}
+  HandleElectionStatus(this.status);
 
   @override
   List<Object> get props => [];
