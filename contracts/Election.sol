@@ -133,7 +133,7 @@ contract Election {
         return admin;
     }
 
-    function setManager(address manager) public
+    function setManager() public
     {
         admin = msg.sender;
     }

@@ -40,16 +40,13 @@ class Election extends ChangeNotifier {
   final String rpcUrl = 'http://192.168.0.12:7545';
   final String wsUrl = 'ws://://192.168.0.12:7545';
   final String privateKey =
-      '1d52c94496f0c1bf791b703d93a9e3b0d55f704d4f616213846041793e1d2d6c';
-  final String secondKey =
-      'aefd8bfc9e9ffb1c9e08fd1baaa13d4d292e1a2c622f10b9897df1ce83d69a8a';
+      '7dbaa1e35f179bdba19d2f1e61bbaeb4e38154e51e4af4ab477ba2e849bee98a';
+  
   EthereumAddress masterAddress;
   EthereumAddress electionAddress;
-  EthereumAddress secondAddress;
   DeployedContract electionContract;
   Web3Client web3client;
   Credentials masterCredentials;
-  Credentials secondCredentials;
   dynamic jsonAbi;
   String abiCode;
 
@@ -65,11 +62,9 @@ class Election extends ChangeNotifier {
             IOWebSocketChannel.connect(wsUrl).cast<String>());
     masterCredentials = await web3client.credentialsFromPrivateKey(privateKey);
     masterAddress = await masterCredentials.extractAddress();
-    secondCredentials = await web3client.credentialsFromPrivateKey(secondKey);
-    secondAddress = await secondCredentials.extractAddress();
     await getAbi();
     await getDeployedContract();
-    await electionContractConstructor(secondAddress.toString());
+    await electionContractConstructor(masterAddress.toString());
     await getState();
   }
 
@@ -96,16 +91,15 @@ class Election extends ChangeNotifier {
     EthereumAddress address = EthereumAddress.fromHex(adminAddress);
     print(address.toString());
     final String res1 = await web3client.sendTransaction(
-        secondCredentials,
+        masterCredentials,
         Transaction.callContract(
-            from: secondAddress,
+            from: address,
             contract: electionContract,
             function: setAdmin,
-            parameters: <dynamic>[address]));
+            parameters: <dynamic>[]));
     final List<dynamic> res = await web3client.call(
         contract: electionContract, function: getAdmin, params: <dynamic>[]);
     print(res.toString());
-    // notifyListeners();
   }
 
   Future<void> addCandidate(

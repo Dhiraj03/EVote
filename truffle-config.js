@@ -2,6 +2,7 @@
 module.exports = {
   networks: {
     development: {
+      networkCheckTimeout:1000000,
       host: "192.168.0.12",
       port: 7545,
       network_id: "*", // Match any network id

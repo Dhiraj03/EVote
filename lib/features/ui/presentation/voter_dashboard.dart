@@ -26,11 +26,12 @@ class VoterDashboard extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           if (_election.getState() == "CREATED" ||
               _election.getState() == "ONGOING") {
+            print('uid' + firebaseUser.uid);
             _firestore
                 .collection("users")
                 .where('uid', isEqualTo: firebaseUser.uid)
                 .getDocuments()
-            .then((value) {
+                .then((value) {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -49,7 +50,8 @@ class VoterDashboard extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                              viewCandidatesPressed(value.documents[0]['privateKey']);
+                              viewCandidatesPressed(
+                                  value.documents[0]['privateKey']);
                             },
                           ),
                           IconButton(
@@ -81,7 +83,9 @@ class VoterDashboard extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          delegateCandidatePressed(value.documents[0]["adminKey"], _delegateAddController.text);
+                          delegateCandidatePressed(
+                              value.documents[0]["adminKey"],
+                              _delegateAddController.text);
                         },
                       ),
                       SizedBox(
@@ -140,8 +144,10 @@ class VoterDashboard extends StatelessWidget {
           } else {
             _firestore
                 .collection("admin")
-                .where('uid', isEqualTo: firebaseUser.uid).getDocuments()
-                .then((value) => VotingDoneScreen(value.documents[0]["privateKey"]));
+                .where('uid', isEqualTo: firebaseUser.uid)
+                .getDocuments()
+                .then((value) =>
+                    VotingDoneScreen(value.documents[0]["privateKey"]));
           }
         });
   }
@@ -155,7 +161,6 @@ class VoterDashboard extends StatelessWidget {
   }
 
   void votePressed(String voterKey, int cid) {
-    
     _voterBloc.add(VoteClicked(voterKey, cid));
   }
 
