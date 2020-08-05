@@ -1,13 +1,8 @@
-import 'package:e_vote/backend/Election.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_vote/features/ui/bloc/admin_bloc/admin_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
-
-import 'package:e_vote/backend/Candidate.dart';
-import 'package:flutter/cupertino.dart';
-
-// Admin Private Key
-String adminkey='';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AdminDashboard extends StatefulWidget {
   @override
@@ -15,427 +10,289 @@ class AdminDashboard extends StatefulWidget {
 }
 
 class _AdminDashboardState extends State<AdminDashboard> {
-  final List<String> Address = <String>[];
-  final List<String> Key = <String>[];
-  final List<String> Proposal = <String>[];
-  
-  Election election = Election();
+  AdminBloc _adminBloc;
 
+  final Firestore _firestore = Firestore.instance;
+  var firebaseUser;
+  String privateKey;
 
-  TextEditingController candidateControlleraddress = TextEditingController();
-  TextEditingController candidateControllerkey = TextEditingController();
-  TextEditingController candidateControllerproposal = TextEditingController();
+  final List<String> voterAddresses = <String>[];
+  final List<String> candidateNames = <String>[];
+  final List<String> candidateProposals = <String>[];
 
-//TODO 1 : change the empty syntax
-  void checkifempty() {
-    String text1,text2,text3 ;
-    // Getting Value From Text Field and Store into String Variable
-    text1 = candidateControlleraddress.text ;
-    text2 = candidateControllerkey.text ;
-    text3 = candidateControllerproposal.text ;
-    // Checking all TextFields.
-    if(text1 == '' || text2 == '' || text3 == '')
-    {
-      // Put your code here which you want to execute when Text Field is Empty.
-      print('Text Field is empty, Please Fill All Data');
-
-    }else{
-
-      
-    }
-
-  }
-
-
-  void addCandidatesToList(String name, String proposal, String adminKey) {
-    setState(() {
-      Address.add(name);
-      Key.add(adminKey);
-      Proposal.add(proposal);
-    });
-  }
-  bool isNameValid = true;
-  RegExp regExp = new RegExp(r'^[a-zA-Z]+$',);
-
+  TextEditingController _candidateNameController = TextEditingController();
+  TextEditingController _candidateProposalController = TextEditingController();
+  TextEditingController _voterAddressController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Text('               CANDIDATES'),
-        backgroundColor: Colors.deepPurpleAccent,
-        automaticallyImplyLeading: true,
-        leading: IconButton(icon:Icon(Icons.arrow_back),
-          onPressed:() => Navigator.pop(context, false),
-        ),
-      ),
-      backgroundColor: Colors.white,
-
-      body:
-      Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: TextField(
-              controller: candidateControlleraddress,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'CANDIDATE NAME',
-                  errorText: isNameValid ? null : "Invalid name"
+    return FutureBuilder<void>(
+        future: getCurrentUser(),
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          _firestore
+              .collection("users")
+              .where('uid', isEqualTo: firebaseUser.uid)
+              .getDocuments()
+              .then((value) {
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: AppBar(
+                title: Text('Admin Dashboard'),
+                centerTitle: true,
+                backgroundColor: Colors.deepPurpleAccent,
+                automaticallyImplyLeading: true,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.pop(context, false),
+                ),
               ),
-            ),
-
-          ),
-          SizedBox(height: 15.0),
-
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: TextField(
-              onChanged: (_){
-                if(regExp.hasMatch(candidateControllerkey.text)){
-                  isNameValid = true;
-                } else {
-                  isNameValid = false;
-                }
-                setState(() {
-                   
-                });
-              },
-              controller: candidateControllerkey,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'ADMIN PRIVATE KEY',
-                  errorText: isNameValid ? null : "Invalid name"
-              ),
-            ),
-
-          ),
-
-          SizedBox(height: 15.0),
-
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: TextField(
-
-              controller: candidateControllerproposal,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'CANDIDATE PROPOSAL',
-                  errorText: isNameValid ? null : "Invalid name"
-              ),
-            ),
-          ),
-
-          RaisedButton(
-            child: Text('ADD'),
-            onPressed: () async{
-              addCandidatesToList(candidateControlleraddress.text, candidateControllerproposal.text, candidateControllerkey.text);
-              adminkey = candidateControllerkey.text;
-              election.addCandidate(candidateControlleraddress.text,candidateControllerproposal.text , adminkey);
-              candidateControlleraddress.clear();
-              candidateControllerproposal.clear();
-            },
-          ),
-          SizedBox(height: 15.0),
-
-          RaisedButton(
-            child: Text('PROCEED (After adding all candidates)'),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Thirdroute()));
-            },
-          ),
-          Expanded(
-            child: ListView.builder(
-                padding: const EdgeInsets.all(8),
-                itemCount: Address.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    height: 70.0,
-                    margin: EdgeInsets.all(2),
-                    color: Colors.deepPurpleAccent,
-                    child: Center(
-                      child: Text(
-                        ' CANDIDATE ${index + 1} :- \n'
-                            'NAME: ${Address[index]} \n'
-                            'PROPOSAL: ${Proposal[index]}',
-                        style: TextStyle(fontSize: 19,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-
-                      ),
+              backgroundColor: Colors.white,
+              body: SingleChildScrollView(
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(15.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text("Add Candidate Section:"),
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              TextFormField(
+                                controller: _candidateNameController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'CANDIDATE NAME',
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              TextFormField(
+                                controller: _candidateProposalController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'CANDIDATE PROPOSAL',
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              RaisedButton(
+                                child: Text('Add Candidate'),
+                                onPressed: () async {
+                                  privateKey =
+                                      value.documents[0]['private key'];
+                                  addCandidatePressed(
+                                      _candidateNameController.text,
+                                      _candidateProposalController.text,
+                                      privateKey);
+                                  _candidateNameController.clear();
+                                  _candidateProposalController.clear();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text("Add Voter Section:"),
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              TextFormField(
+                                controller: _voterAddressController,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'VOTER ADDRESS',
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              RaisedButton(
+                                child: Text('Add Voter'),
+                                onPressed: () async {
+                                  privateKey =
+                                      value.documents[0]['private key'];
+                                  addVoterPressed(
+                                      _voterAddressController.text, privateKey);
+                                  _voterAddressController.clear();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        Expanded(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              RaisedButton(
+                                child: Text('Start Elections'),
+                                onPressed: () async {
+                                  privateKey =
+                                      value.documents[0]['private key'];
+                                  electionStatusChanged("START", privateKey);
+                                },
+                              ),
+                              RaisedButton(
+                                child: Text('End Elections'),
+                                onPressed: () async {
+                                  privateKey =
+                                      value.documents[0]['private key'];
+                                  electionStatusChanged("STOP", privateKey);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        BlocBuilder(
+                            bloc: _adminBloc,
+                            builder: (BuildContext context, AdminState state) {
+                              if (state is ProcessingState) {
+                                return CircularProgressIndicator();
+                              }
+                              if (state is AddCandidateOrVoter) {
+                                return Column(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            flex: 1,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text('List of Candidates:'),
+                                                ListView.builder(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    itemCount:
+                                                        candidateNames.length,
+                                                    itemBuilder:
+                                                        (BuildContext context,
+                                                            int index) {
+                                                      return Container(
+                                                        height: 70.0,
+                                                        margin:
+                                                            EdgeInsets.all(2),
+                                                        color: Colors
+                                                            .deepPurpleAccent,
+                                                        child: Center(
+                                                          child: Text(
+                                                            ' Candidate ${candidateNames[index]} proposes ${candidateProposals[index]}',
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                ListView.builder(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    itemCount:
+                                                        voterAddresses.length,
+                                                    itemBuilder:
+                                                        (BuildContext context,
+                                                            int index) {
+                                                      return Container(
+                                                        height: 70.0,
+                                                        margin:
+                                                            EdgeInsets.all(2),
+                                                        color: Colors
+                                                            .deepPurpleAccent,
+                                                        child: Center(
+                                                          child: Text(
+                                                            ' Voter ${index + 1} address ${voterAddresses[index]}',
+                                                            style: TextStyle(
+                                                              fontSize: 18,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }
+                              if (state is HandleElectionStatus) {
+                                return Text(
+                                    "The Elections have ${state.status}ED");
+                              }
+                            }),
+                      ],
                     ),
-                  );
-                }
-            ),
-          ),
-        ],
-      ),
-    );
+                  ),
+                ),
+              ),
+            );
+          });
+        });
+  }
 
+  void electionStatusChanged(String status, String privateKey) {
+    _adminBloc.add(HandleElectionStatusClicked(status, privateKey));
+  }
+
+  void addCandidatePressed(
+      String nameOfCandidate, String proposal, String privateKey) {
+    candidateNames.add(nameOfCandidate);
+    candidateProposals.add(proposal);
+    _adminBloc.add(AddCandidateClicked(nameOfCandidate, proposal, privateKey));
+  }
+
+  void addVoterPressed(String voterAddress, String privateKey) {
+    voterAddresses.add(voterAddress);
+    _adminBloc.add(AddVoterClicked(voterAddress, privateKey));
+  }
+
+  Future<void> getCurrentUser() async {
+    firebaseUser = await FirebaseAuth.instance.currentUser();
   }
 }
-
-
-
-class Thirdroute extends StatefulWidget {
-  @override
-  _ThirdrouteState createState() => _ThirdrouteState();
-}
-
-class _ThirdrouteState extends State<Thirdroute> {
-  final List<String> Addressv = <String>[];
-  final List<String> Keyv = <String>[];
-  TextEditingController voterControlleraddress = TextEditingController();
-  TextEditingController voterControllerkey = TextEditingController();
-  Election election = Election();
-
-  void addvotersToList() {
-    setState(() {
-      Addressv.add(voterControlleraddress.text);
-      Keyv.add(voterControllerkey.text);
-    });
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('                    VOTERS'),
-          leading: IconButton(icon:Icon(Icons.arrow_back),
-            onPressed:() => Navigator.pop(context, false),
-          ),
-          backgroundColor: Colors.deepPurpleAccent,
-        ),
-        backgroundColor: Colors.white,
-
-        body:
-        Column(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: TextField(
-                controller: voterControlleraddress,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'VOTER ADDRESS',
-                ),
-              ),
-
-            ),
-            SizedBox(height: 20.0),
-
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: TextField(
-                controller: voterControllerkey,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'VOTER NAME',
-                ),
-              ),
-
-            ),
-            RaisedButton(
-              child: Text('ADD'),
-              onPressed: () async{
-                addvotersToList();
-                election.addVoter(voterControlleraddress.text, adminkey);
-                voterControlleraddress.clear();
-              },
-            ),
-            SizedBox(height: 20.0),
-
-            RaisedButton(
-              child: Text('PROCEED'),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Firstroute()));
-              },
-            ),
-            Expanded(
-              child: ListView.builder(
-                  padding: const EdgeInsets.all(8),
-                  itemCount: Addressv.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      height: 70.0,
-                      margin: EdgeInsets.all(2),
-                      color: Colors.deepPurpleAccent,
-                      child: Center(
-                        child: Text(
-                          ' VOTER ${index+1} :- \n ADDRESS: ${Addressv[index]} \n NAME: ${Keyv[index]}',
-                          style: TextStyle(fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,),
-                        ),
-                      ),
-                    );
-                  }
-              ),
-            ),
-          ],
-        ),
-      );
-
-
-  }
-}
-
-class Firstroute extends StatelessWidget {
-  Election election=Election();
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Admin Home Page'),
-        centerTitle: true,
-        backgroundColor: Colors.deepPurpleAccent,
-      ),
-
-      backgroundColor: Colors.white,
-
-      body: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-              width: 205.0,
-              height: 700.0,
-              child: Card(
-                color: Colors.green,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0)
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0.0, 25.0, 0.0, 0.0),
-                      child: Text(
-                        'Start a new Election',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 21.0,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(
-                      width: 100.0,
-                      height: 200.0,),
-
-                    RaisedButton(
-                      textColor: Colors.black,
-                      color: Colors.white,
-                      child: Text(
-                        'START',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      onPressed: () async{
-                       election.startElection(adminkey);
-                      },
-                      shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(20.0),
-                      ),
-                    ),
-                    SizedBox(height: 150.0),
-                    Icon(
-                      Icons.check,
-                      size: 100.0,
-                    ),
-                  ],
-                ),
-              ),
-
-            ),
-            SizedBox(height: 50.0),
-
-            Container(
-              padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-              width: 205.0,
-              height: 700.0,
-              child: Card(
-                color: Colors.redAccent,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0)
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0.0, 25.0, 0.0, 0.0),
-                      child: Text(
-                        'End an Election',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 21.0,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(
-                        width: 50.0,
-                        height: 200.0),
-
-                    RaisedButton(
-
-                      textColor: Colors.black,
-                      color: Colors.white,
-                      child: Text(
-                        'END',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      onPressed: () async{
-                      election.endElection(adminkey);
-                      },
-                      shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(20.0),
-                      ),
-                    ),
-                    SizedBox(height: 150.0),
-
-                    Icon(
-                      Icons.clear,
-                      size: 100.0,
-                    ),
-                  ],
-                ),
-              ),
-
-            ),
-
-          ],
-        ),
-      ),
-    );
-
-
-
-
-
-
-
-
-
-
-
-
-  }
-}
-
-
