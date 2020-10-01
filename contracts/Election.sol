@@ -1,6 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.5.0;
 
+contract electionFactory{
+    Election[] public deployedElections;
+     
+    function createElection(address owner, string memory description) public {
+        Election newElection = new Election(owner,description);
+        deployedElections.push(newElection);
+    }
+
+    function getDeployedElections() public view returns (Election[] memory) {
+        return deployedElections;
+    }
+}
+
 contract Election {
     //Structure that represents a registered voter in the election
     struct Voter {
@@ -20,7 +33,7 @@ contract Election {
     mapping(uint256 => Candidate) private candidates; // ID of candidate mapped to the candidate struct - To view details of all registered candidates
     mapping(uint256 => uint256) private voteCount; // ID of the candidate mapped to the votes of the candidate privately
 
-    address  admin; // The address of the official/authority conducting the election
+    address public admin; // The address of the official/authority conducting the election
 
     enum State {CREATED, ONGOING, STOP}
     /*This enum represents the state of the election -
@@ -29,15 +42,15 @@ contract Election {
     STOP - The voting period has ended and it is time for counting
     */
 
-    State electionState; // A variable of the type enum State to represent the election state
-
+    State  electionState; // A variable of the type enum State to represent the election state
+    string public description;
     uint256 public candidate_count; // Keeps a count of the registered candidates
 
     //modifier to check if the address is of the admin's as several functions can only be accessed by the admin
-    modifier checkAdmin() {
+    modifier checkAdmin(address owner) {
         require(
-            msg.sender == admin,
-            "only the owner has access to this function"
+            owner == admin,
+            "Only the owner has access to this function"
         );
         _;
     }
@@ -70,9 +83,9 @@ contract Election {
     }
 
     //modifier to check if a voter is a valid voter
-    modifier checkIfVoterValid() {
+    modifier checkIfVoterValid(address owner) {
         require(
-            !voters[msg.sender].hasVoted && voters[msg.sender].weight > 0,
+            !voters[owner].hasVoted && voters[owner].weight > 0,
             "voter has already voted"
         );
         _;
@@ -88,9 +101,9 @@ contract Election {
     }
 
     //modifier to check if the person is not an admin
-    modifier checkNotAdmin() {
+    modifier checkNotAdmin(address owner) {
         require(
-            msg.sender != admin,
+            owner != admin,
             "owner is not allowed to access this function"
         );
         _;
@@ -114,35 +127,27 @@ contract Election {
     event AddedACandidate(uint candidateID, string candidateName, string candidateProposal);
 
     // Initialization
-    constructor() public {
+    constructor(address owner, string memory description) public {
+        admin = owner;
         electionState = State.CREATED; // Setting Eection state to CREATED
+        description = description;
     }
  
     function checkState() public view returns (string memory)
     {
         if(electionState == State.CREATED)
-          return "CREATED";
+        return "CREATED";
         else if(electionState == State.ONGOING)
-          return "ONGOING";
+        return "ONGOING";
         else if(electionState == State.STOP)
-          return "STOP";
-    }
-
-    function getAdmin() public view returns (address)
-    {
-        return admin;
-    }
-
-    function setManager() public
-    {
-        admin = msg.sender;
+        return "STOP";
     }
     // To Add a candidate
     // Only admin can add and
     // candidate can be added only before election starts
-    function addCandidate(string memory _name, string memory _proposal)
+    function addCandidate(string memory _name, string memory _proposal, address owner)
         public
-        checkAdmin
+        checkAdmin(owner)
         checkIfCreated
     {
         candidate_count++;
@@ -157,9 +162,9 @@ contract Election {
     // only admin can add
     // can add only before election starts
     // can add a voter only one time
-    function addVoter(address _voter)
+    function addVoter(address _voter, address owner)
         public
-        checkAdmin
+        checkAdmin(owner)
         checkIfCreated
         checkNotRegistered(_voter)
     {
@@ -169,7 +174,7 @@ contract Election {
 
     // setting Election state to ONGOING
     // by admin
-    function startElection() public checkAdmin checkIfCreated {
+    function startElection(address owner) public checkAdmin(owner) checkIfCreated {
         electionState = State.ONGOING;
         emit ElectionStart(electionState);
     }
@@ -212,51 +217,51 @@ contract Election {
     // to delegate the vote
     // only during election is going on
     // and by a voter who has not yet voted
-    function delegateVote(address _delegate)
+    function delegateVote(address _delegate, address owner)
         public
         checkNotComplete
-        checkIfVoterValid
-        checkNotAdmin
+        checkIfVoterValid(owner)
+        checkNotAdmin(owner)
     {
-        require(_delegate != msg.sender, "self delegation is not allowed");
+        require(_delegate != owner, "self delegation is not allowed");
         address to = _delegate;
         while (voters[to].delegate != address(0)) {
             to = voters[to].delegate;
 
             // To prevent infinite loop
-            if (to == msg.sender) {
+            if (to == owner) {
                 revert();
             }
         }
-        voters[msg.sender].delegate = to;
+        voters[owner].delegate = to;
         emit DelegatedSuccessfully(_delegate);
-        voters[msg.sender].hasVoted = true;
+        voters[owner].hasVoted = true;
 
         if (voters[to].hasVoted) {
             // if delegate has already voted
             // voters vote is directly added to candidates vote count
-            voteCount[voters[to].voteTowards] += voters[msg.sender].weight;
+            voteCount[voters[to].voteTowards] += voters[owner].weight;
         } else {
-            voters[to].weight += voters[msg.sender].weight;
+            voters[to].weight += voters[owner].weight;
         }
     }
 
     // to cast the vote
-    function vote(uint256 _ID)
+    function vote(uint256 _ID, address owner)
         public
         checkIfOngoing
-        checkIfVoterValid
+        checkIfVoterValid(owner)
         checkIfCandidateValid(_ID)
     {
-        voters[msg.sender].hasVoted = true;
-        voters[msg.sender].voteTowards = _ID;
-        voteCount[_ID] += voters[msg.sender].weight;
+        voters[owner].hasVoted = true;
+        voters[owner].voteTowards = _ID;
+        voteCount[_ID] += voters[owner].weight;
         emit VotedSuccessfully(_ID);
     }
 
     // Setting Election state to STOP
     // by admin
-    function endElection() public checkAdmin {
+    function endElection(address owner) public checkAdmin(owner) {
         electionState = State.STOP;
         emit ElectionEnd(electionState);
     }
