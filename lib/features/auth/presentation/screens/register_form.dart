@@ -99,14 +99,16 @@ class _RegisterFormState extends State<RegisterForm> {
                   TextFormField(
                     controller: _passwordController,
                     decoration: InputDecoration(
+                      errorMaxLines: 3,
                       icon: Icon(Icons.lock),
                       labelText: 'Password',
                     ),
                     obscureText: true,
                     autocorrect: false,
                     autovalidate: true,
+                    
                     validator: (_) {
-                      return !state.isPasswordValid ? 'Invalid Password' : null;
+                      return !state.isPasswordValid ? 'Invalid Password. The password must contain atleast 8 characters, one lowercase alphabet and one digit.' : null;
                     },
                   ),
                   RegisterButton(

@@ -1,18 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.5.0;
 
-contract electionFactory{
-    Election[] public deployedElections;
-     
-    function createElection(address owner, string memory description) public {
-        Election newElection = new Election(owner,description);
-        deployedElections.push(newElection);
-    }
-
-    function getDeployedElections() public view returns (Election[] memory) {
-        return deployedElections;
-    }
-}
 
 contract Election {
     //Structure that represents a registered voter in the election
