@@ -121,7 +121,7 @@ contract Election {
         description = description;
     }
  
-    function checkState() public view returns (string memory)
+    function checkState() public view returns (string memory state)
     {
         if(electionState == State.CREATED)
         return "CREATED";
@@ -172,9 +172,9 @@ contract Election {
         public
         view
         returns (
-            uint256,
-            string memory,
-            string memory
+            uint256 id,
+            string memory name,
+            string memory proposal
         )
     {
         return (
@@ -189,17 +189,19 @@ contract Election {
         public
         view
         checkIfComplete
-        returns (string memory)
+        returns (string memory name, uint256 id, uint256 votes)
     {
         uint256 max;
+        uint256 maxIndex;
         string memory winner;
         for (uint256 i = 1; i <= candidate_count; i++) {
             if (voteCount[i] > max) {
                 winner = candidates[i].name;
+                maxIndex = i;
                 max = voteCount[i];
             }
         }
-        return winner;
+        return (winner,i, max) ;
     }
 
     // to delegate the vote
@@ -261,9 +263,9 @@ contract Election {
         checkIfComplete
         checkIfCandidateValid(_ID)
         returns (
-            uint256,
-            string memory,
-            uint256
+            uint256 id,
+            string memory name,
+            uint256 count,
         )
     {
         return (_ID, candidates[_ID].name, voteCount[_ID]);

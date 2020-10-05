@@ -1,4 +1,4 @@
-import 'package:e_vote/features/database/firestore_repository.dart';
+import 'package:e_vote/database/firestore_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -36,6 +36,7 @@ class UserRepository {
   }
 
   Future<void> signUp(String email, String password) async {
+    firestoreRepository.createNewUser(email);
     return await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
   }
