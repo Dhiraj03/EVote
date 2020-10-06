@@ -17,26 +17,31 @@ class ElectionDataSource {
     return response.data["data"][0]["address"];
   }
 
+  //Fetches the count of registered candidates in the election
   Future<int> getCandidateCount() async {
     var response = await dioClient.get(url + "/candidate_count");
     return response.data["data"][0]["uint256"].toInt();
   }
 
+  //Fetches the current state of the election - CREATED, ONGOING or STOPPED
   Future<String> getElectionState() async {
     var response = await dioClient.get(url + "/checkState");
     return response.data["data"][0]["state"];
   }
 
+  //Fetches a short description of the election
   Future<String> getDescription() async {
     var response = await dioClient.get(url + "/description");
     return response.data["data"][0]["string"];
   }
 
+  //Fetches the details of a candidate - ID, Name, Proposal
   Future<Candidate> getCandidate(int id) async {
     var response = await dioClient.get(url + "/displayCandidate/$id");
     return Candidate.fromJson(response.data["data"][0]);
   }
 
+  //Fetches the details of all the registered candidates
   Future<List<Candidate>> getAllCandidates() async {
     int count = await getCandidateCount();
     List<Candidate> result = [];
@@ -47,26 +52,43 @@ class ElectionDataSource {
     return result;
   }
 
-  Future<Candidate> showCandidateResult(int id) async {
+  //Fetches the result of the candidate
+  Future<Either<ErrorMessage, Candidate>> showCandidateResult(int id) async {
     var response = await dioClient.get(url + "/showResults/$id");
-    return Candidate.result(response.data["data"][0]);
+    if (response.statusCode == 400) {
+      return Left(
+          ErrorMessage(message: response.data["error"]["details"]["message"]));
+    } else
+      return Right(Candidate.result(response.data["data"][0]));
   }
 
-  Future<List<Candidate>> showResults() async {
+  //Fetches the results of all the candidates
+  Future<Either<ErrorMessage, List<Candidate>>> showResults() async {
     int count = await getCandidateCount();
-    List<Candidate> result = [];
-    for (int i = 1; i <= count; i++) {
-      dioClient.get(url + "/showResults/$i").then(
-          (response) => result.add(Candidate.result(response.data["data"][0])));
+    if (getElectionState() == "STOP")
+      return Left(ErrorMessage(message: "The election has not ended yet."));
+    else {
+      List<Candidate> result = [];
+      for (int i = 1; i <= count; i++) {
+        dioClient.get(url + "/showResults/$i").then((response) {
+          result.add(Candidate.result(response.data["data"][0]));
+        });
+      }
+      return Right(result);
     }
-    return result;
   }
 
-  Future<Candidate> getWinner() async {
+  //Returns the winner of the election
+  Future<Either<ErrorMessage, Candidate>> getWinner() async {
     var response = await dioClient.get(url + "/showWinner");
-    return Candidate.winner(response.data["data"][0]);
+    if (response.statusCode == 400) {
+      return Left(
+          ErrorMessage(message: response.data["error"]["details"]["message"]));
+    }
+    return Right(Candidate.winner(response.data["data"][0]));
   }
 
+  //Function to register a new candidate
   Future<Either<ErrorMessage, String>> addCandidate(
       String name, String proposal) async {
     Map<String, dynamic> map = {
@@ -78,35 +100,72 @@ class ElectionDataSource {
     if (response.statusCode == 200) {
       return Right(response.data["data"][0]["txHash"]);
     } else {
-      return Left(ErrorMessage(message: response.data["error"]["message"]));
+      return Left(ErrorMessage(
+          message: "The registration period for candidates has ended."));
     }
   }
 
-  Future<void> addVoter(String voter) async {
+  //Function to register a new voter
+  Future<Either<ErrorMessage, String>> addVoter(String voter) async {
     Map<String, dynamic> map = {"_voter": voter, "owner": adminAddress};
-
-    return await dioClient.post(url + "/addVoter", data: map);
+    var response = await dioClient.post(url + "/addVoter", data: map);
+    if (response.statusCode == 200) {
+      return Right(response.data["data"][0]["txHash"]);
+    } else {
+      if (response.data["error"]["message"] == "DataEncodingError")
+        return Left(
+            ErrorMessage(message: "Invalid arguments. Please try again."));
+      else if (voter == adminAddress)
+        return Left(ErrorMessage(message: response.data["error"]["message"]));
+      else
+        return Left(ErrorMessage(
+            message: "The registration period for candidates has ended."));
+    }
   }
 
-  Future<void> delegateVoter(String delegate, String owner) async {
+  //Function to delegate your vote to someone else
+  Future<Either<ErrorMessage, String>> delegateVoter(
+      String delegate, String owner) async {
     Map<String, dynamic> map = {"_delegate": delegate, "owner": owner};
-    return await dioClient.post(url + "/delegateVoter", data: map);
+    var response = await dioClient.post(url + "/delegateVoter", data: map);
+    if (response.statusCode == 200) {
+      return Right(response.data["data"][0]["txHash"]);
+    } else {
+      if (response.data["error"]["message"] == "DataEncodingError")
+        return Left(
+            ErrorMessage(message: "Invalid arguments. Please try again."));
+      else
+        return Left(ErrorMessage(message: response.data["error"]["message"]));
+    }
   }
 
-  Future<void> endElection() async {
+  //Function to endElection
+  Future<String> endElection() async {
     Map<String, dynamic> map = {"onwer": adminAddress};
-    return await dioClient.post(url + "/endElection", data: map);
+    var response = await dioClient.post(url + "/endElection", data: map);
+    return response.data[0]["txHash"];
   }
 
   Future<void> startElection() async {
     Map<String, dynamic> map = {"onwer": adminAddress};
-    return await dioClient.post(url + "/startElection", data: map);
+    var response = await dioClient.post(url + "/startElection", data: map);
+    if (response.statusCode == 200)
+      return Right(response.data[0]["txHash"]);
+    else
+      return Left(ErrorMessage(message: response.data["error"]["message"]));
   }
 
-  Future<Either<String, ErrorMessage>> vote(int id, String owner) async {
+  Future<Either<ErrorMessage, String>> vote(int id, String owner) async {
     Map<String, dynamic> map = {"owner": owner, "_ID": id};
-    try {
-      await dioClient.post(url + "/vote", data: map);
-    } catch (e) {}
+     var response =  await dioClient.post(url + "/vote", data: map);
+    if (response.statusCode == 200) {
+      return Right(response.data["data"][0]["txHash"]);
+    } else {
+      if (response.data["error"]["message"] == "DataEncodingError")
+        return Left(
+            ErrorMessage(message: "Invalid arguments. Please try again."));
+      else
+        return Left(ErrorMessage(message: response.data["error"]["message"]));
+    }
   }
 }

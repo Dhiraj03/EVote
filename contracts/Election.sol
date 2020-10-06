@@ -47,7 +47,7 @@ contract Election {
     modifier checkIfCreated() {
         require(
             electionState == State.CREATED,
-            "election is yet to be created"
+            "The election is either ongoing or has ended."
         );
         _;
     }
@@ -66,7 +66,7 @@ contract Election {
     }
 
     modifier checkNotComplete() {
-        require(electionState != State.STOP, "election is not yet completed");
+        require(electionState != State.STOP, "election has ended");
         _;
     }
 
@@ -153,6 +153,7 @@ contract Election {
     function addVoter(address _voter, address owner)
         public
         checkAdmin(owner)
+        checkNotAdmin(_voter)
         checkIfCreated
         checkNotRegistered(_voter)
     {
