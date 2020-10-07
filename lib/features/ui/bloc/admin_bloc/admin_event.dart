@@ -11,3 +11,8 @@ class StartElection extends AdminEvent {
   @override
   List<Object> get props => [];
 }
+
+class DisplayCandidates extends AdminEvent {
+  @override
+  List<Object> get props => [];
+}

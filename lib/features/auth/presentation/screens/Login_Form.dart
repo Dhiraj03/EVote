@@ -3,7 +3,6 @@ import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart'
 import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_events.dart';
 import 'package:e_vote/features/auth/presentation/bloc/login_bloc/login_bloc.dart';
 import 'package:e_vote/features/auth/presentation/widgets/create_account_button.dart';
-import 'package:e_vote/features/auth/presentation/widgets/google_login_button.dart';
 import 'package:e_vote/features/auth/presentation/widgets/login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -129,7 +128,6 @@ class _LoginFormState extends State<LoginForm> {
                                   ? _onFormSubmitted
                                   : null,
                             ),
-                            GoogleLoginButton(),
                             CreateAccountButton(
                                 userRepository: _userRepository),
                           ]))

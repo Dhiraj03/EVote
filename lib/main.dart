@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:random_color_scheme/random_color_scheme.dart';
 import 'features/auth/presentation/bloc/auth_bloc/auth_states.dart';
 import 'features/auth/presentation/screens/Login_Screen.dart';
 import 'home_screen.dart';
@@ -36,8 +37,11 @@ class _HomePageState extends State<HomePage> {
     return BlocProvider(
         create: (BuildContext context) => _authBloc,
         child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData.dark(),
           home: 
           BlocBuilder<AuthBloc, AuthState>(
+            bloc: _authBloc,
               builder: (BuildContext context, AuthState state) {
             if (state is AppStarted) return SplashScreen();
             if (state is Authenticated)

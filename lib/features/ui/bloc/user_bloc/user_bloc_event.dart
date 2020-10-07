@@ -8,8 +8,6 @@ abstract class UserBlocEvent extends Equatable {
 }
 
 class IdentifyUser extends UserBlocEvent {
-  final String email;
-  IdentifyUser({@required this.email});
   @override
   List<Object> get props => [];
 }

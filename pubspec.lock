@@ -174,6 +174,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.1"
+  flutter_icons:
+    dependency: "direct main"
+    description:
+      name: flutter_icons
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -184,13 +191,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  fluttericon:
-    dependency: "direct main"
-    description:
-      name: fluttericon
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.7"
   google_sign_in:
     dependency: "direct main"
     description:
@@ -212,6 +212,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.9.1+1"
+  hsluv:
+    dependency: transitive
+    description:
+      name: hsluv
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.5"
   http:
     dependency: "direct main"
     description:
@@ -324,6 +331,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.3"
+  random_color_scheme:
+    dependency: "direct main"
+    description:
+      name: random_color_scheme
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -415,4 +429,4 @@ packages:
     version: "3.6.1"
 sdks:
   dart: ">=2.7.0 <3.0.0"
-  flutter: ">=1.16.0 <2.0.0"
+  flutter: ">=1.17.0 <2.0.0"
