@@ -38,7 +38,7 @@ contract Election {
     modifier checkAdmin(address owner) {
         require(
             owner == admin,
-            "Only the owner has access to this function"
+            "Only the election admin has access to this function."
         );
         _;
     }
@@ -55,18 +55,18 @@ contract Election {
     modifier checkIfOngoing() {
         require(
             electionState == State.ONGOING,
-            "election is not in ongoing phase"
+            "Election is not active or ongoing currently."
         );
         _;
     }
 
     modifier checkIfComplete() {
-        require(electionState == State.STOP, "election is not yet completed");
+        require(electionState == State.STOP, "The election has not ended yet.");
         _;
     }
 
     modifier checkNotComplete() {
-        require(electionState != State.STOP, "election has ended");
+        require(electionState != State.STOP, "The election has ended.");
         _;
     }
 
@@ -74,7 +74,7 @@ contract Election {
     modifier checkIfVoterValid(address owner) {
         require(
             !voters[owner].hasVoted && voters[owner].weight > 0,
-            "voter has already voted"
+            "Voter has already voted or delegated their vote."
         );
         _;
     }
@@ -83,7 +83,7 @@ contract Election {
     modifier checkIfCandidateValid(uint256 _candidateId) {
         require(
             _candidateId > 0 && _candidateId <= candidate_count,
-            "invalid candidate"
+            "Invalid candidate."
         );
         _;
     }
@@ -92,7 +92,7 @@ contract Election {
     modifier checkNotAdmin(address owner) {
         require(
             owner != admin,
-            "owner is not allowed to access this function"
+            "The election admin is not allowed to access this function."
         );
         _;
     }
@@ -101,7 +101,7 @@ contract Election {
     modifier checkNotRegistered(address voter) {
         require(
             !voters[voter].hasVoted && voters[voter].weight == 0,
-            "voter is already registered"
+            "Voter has already been registered."
         );
         _;
     }
@@ -115,10 +115,10 @@ contract Election {
     event AddedACandidate(uint candidateID, string candidateName, string candidateProposal);
 
     // Initialization
-    constructor(address owner, string memory description) public {
+    constructor(address owner, string memory desc) public {
         admin = owner;
         electionState = State.CREATED; // Setting Eection state to CREATED
-        description = description;
+        description = desc;
     }
  
     function checkState() public view returns (string memory state)
@@ -202,7 +202,7 @@ contract Election {
                 max = voteCount[i];
             }
         }
-        return (winner,i, max) ;
+        return (winner,maxIndex, max) ;
     }
 
     // to delegate the vote
@@ -247,6 +247,7 @@ contract Election {
         voters[owner].hasVoted = true;
         voters[owner].voteTowards = _ID;
         voteCount[_ID] += voters[owner].weight;
+        voters[owner].weight = 0;
         emit VotedSuccessfully(_ID);
     }
 
@@ -266,7 +267,7 @@ contract Election {
         returns (
             uint256 id,
             string memory name,
-            uint256 count,
+            uint256 count
         )
     {
         return (_ID, candidates[_ID].name, voteCount[_ID]);
