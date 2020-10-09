@@ -12,7 +12,43 @@ class StartElection extends AdminEvent {
   List<Object> get props => [];
 }
 
+class EndElection extends AdminEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class DisplayCandidates extends AdminEvent {
   @override
   List<Object> get props => [];
 }
+
+class AddCandidate extends AdminEvent {
+  final String name;
+  final String proposal;
+  AddCandidate({@required this.name, @required this.proposal});
+  @override
+  List<Object> get props => [name, proposal];
+}
+
+class AddVoter extends AdminEvent {
+  final String voterAddress;
+  AddVoter({@required this.voterAddress});
+  @override
+  List<Object> get props => [voterAddress];
+}
+
+class ShowWinner extends AdminEvent {
+  @override
+  List<Object> get props => [];
+} 
+
+class ShowResults extends AdminEvent {
+  @override
+  List<Object> get props => [];
+} 
+class ElectionDetails extends AdminEvent {
+  @override
+  List<Object> get props => [];
+}
+
+
