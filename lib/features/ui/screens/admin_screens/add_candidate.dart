@@ -46,7 +46,7 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                                   children: <Widget>[
                                     Text(
                                       'Candidate ID:   ',
-                                      style: GoogleFonts.montserrat(
+                                      style: TextStyle(
                                           color: Color(0xff2F2F2F),
                                           fontSize: 19,
                                           fontWeight: FontWeight.w600),

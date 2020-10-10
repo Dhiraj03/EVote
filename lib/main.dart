@@ -4,6 +4,7 @@ import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_events.dar
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:random_color_scheme/random_color_scheme.dart';
 import 'features/auth/presentation/bloc/auth_bloc/auth_states.dart';
@@ -39,6 +40,9 @@ class _HomePageState extends State<HomePage> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.from(
+          textTheme: GoogleFonts.montserratTextTheme(
+            Theme.of(context).textTheme
+          ),
             colorScheme: ColorScheme(
                 primary: Color(0xFFf4511e),
                 primaryVariant: Color(0xffb91400),

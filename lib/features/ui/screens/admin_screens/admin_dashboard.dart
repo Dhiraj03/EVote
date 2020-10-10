@@ -1,6 +1,7 @@
 import 'package:e_vote/features/ui/bloc/admin_bloc/admin_bloc.dart';
 import 'package:e_vote/features/ui/screens/admin_screens/add_candidate.dart';
 import 'package:e_vote/features/ui/screens/admin_screens/add_voter.dart';
+import 'package:e_vote/features/ui/screens/admin_screens/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -16,23 +17,27 @@ class _AdminDashboardState extends State<AdminDashboard>
   TabController tabController;
   @override
   void initState() {
-    pageController = PageController();
-    tabController = TabController(length: 2, vsync: this);
+    pageController = PageController(initialPage: 1);
+    tabController = TabController(length: 3, vsync: this, initialIndex: 1);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AdminBloc>(
-          create: (_) => AdminBloc(),
-          child: Scaffold(
+      create: (_) => AdminBloc(),
+      child: Scaffold(
           body: PageView(
             allowImplicitScrolling: true,
             onPageChanged: (index) {
               tabController.index = index;
             },
             controller: pageController,
-            children: <Widget>[AddCandidateScreen(), AddVoterScreen()],
+            children: <Widget>[
+              AddCandidateScreen(),
+              DashboardScreen(),
+              AddVoterScreen()
+            ],
           ),
           bottomNavigationBar: TabBar(
               labelColor: Color(0xff373737),
@@ -44,6 +49,7 @@ class _AdminDashboardState extends State<AdminDashboard>
               },
               tabs: [
                 Tab(icon: Icon(MaterialIcons.person_add)),
+                Tab(icon: Icon(MaterialCommunityIcons.view_dashboard)),
                 Tab(icon: Icon(FlutterIcons.vote_mco)),
               ])),
     );
