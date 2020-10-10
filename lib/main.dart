@@ -35,40 +35,37 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // ignore: always_specify_types
     return BlocProvider(
-        create: (BuildContext context) => _authBloc,
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          // theme: theme.buildLightTheme(),
-          theme: ThemeData.from(colorScheme: ColorScheme(
-            primary: Color(0xFFf4511e), 
-            primaryVariant: Color(0xffb91400), 
-            secondary: Color(0xFF616161), 
-            secondaryVariant: Color(0xFF373737), 
-            surface:  Color(0xFFf4511e), 
-            background: Color(0xFFe0e0e0), 
-            error: Color(0xffad1457), 
-            onPrimary: Colors.black54, 
-            onSecondary: Colors.black87, 
-            onSurface: Colors.black54, 
-            onBackground: Colors.black87, 
-            onError: Colors.black87, 
-            brightness: Brightness.light)),
-          
-            
-          
-          home: 
-          BlocBuilder<AuthBloc, AuthState>(
+      create: (BuildContext context) => _authBloc,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.from(
+            colorScheme: ColorScheme(
+                primary: Color(0xFFf4511e),
+                primaryVariant: Color(0xffb91400),
+                secondary: Color(0xFF616161),
+                secondaryVariant: Color(0xFF373737),
+                surface: Color(0xFFF2F2F2),
+                background: Color(0xFFF2F2F2),
+                error: Color(0xffad1457),
+                onPrimary: Colors.black54,
+                onSecondary: Colors.black87,
+                onSurface: Colors.black54,
+                onBackground: Colors.black87,
+                onError: Colors.black87,
+                brightness: Brightness.light)),
+        home: BlocBuilder<AuthBloc, AuthState>(
             bloc: _authBloc,
-              builder: (BuildContext context, AuthState state) {
-            if (state is AppStarted) return SplashScreen();
-            if (state is Authenticated)
-              return HomeScreen(userRepository: _userRepository,);
-            if (state is Unauthenticated)
-              return LoginScreen(userRepository: _userRepository);
-            return Container();
-          }),
-        ),
-      
+            builder: (BuildContext context, AuthState state) {
+              if (state is AppStarted) return SplashScreen();
+              if (state is Authenticated)
+                return HomeScreen(
+                  userRepository: _userRepository,
+                );
+              if (state is Unauthenticated)
+                return LoginScreen(userRepository: _userRepository);
+              return Container();
+            }),
+      ),
     );
   }
 

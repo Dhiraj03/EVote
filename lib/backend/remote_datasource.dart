@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz_unsafe.dart';
 import 'package:dio/dio.dart';
 import 'package:e_vote/backend/errors.dart';
 import 'package:e_vote/models/candidate_model.dart';
@@ -44,11 +45,14 @@ class ElectionDataSource {
   //Fetches the details of all the registered candidates
   Future<List<Candidate>> getAllCandidates() async {
     int count = await getCandidateCount();
+    var list = List<int>.generate(count, (index) => index + 1);
     List<Candidate> result = [];
-    for (int i = 1; i <= count; i++) {
-      dioClient.get(url + "/displayCandidate/$i").then((response) =>
-          result.add(Candidate.fromJson(response.data["data"][0])));
-    }
+    await Future.wait(list.map((e) async {
+     await dioClient.get(url + '/displayCandidate/$e').then((value) {
+        result.add(Candidate.fromJson(value.data["data"][0]));
+      });
+    }));
+    print('length' + result.length.toString());
     return result;
   }
 
@@ -157,7 +161,7 @@ class ElectionDataSource {
 
   Future<Either<ErrorMessage, String>> vote(int id, String owner) async {
     Map<String, dynamic> map = {"owner": owner, "_ID": id};
-     var response =  await dioClient.post(url + "/vote", data: map);
+    var response = await dioClient.post(url + "/vote", data: map);
     if (response.statusCode == 200) {
       return Right(response.data["data"][0]["txHash"]);
     } else {

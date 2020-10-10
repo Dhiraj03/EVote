@@ -35,8 +35,9 @@ class _AdminDashboardState extends State<AdminDashboard>
             children: <Widget>[AddCandidateScreen(), AddVoterScreen()],
           ),
           bottomNavigationBar: TabBar(
-              labelColor: Theme.of(context).accentColor,
-              unselectedLabelColor: Colors.white54,
+              labelColor: Color(0xff373737),
+              indicatorColor: Theme.of(context).primaryColor,
+              unselectedLabelColor: Color(0xCC8e8e8e),
               controller: tabController,
               onTap: (index) {
                 pageController.jumpToPage(index);
