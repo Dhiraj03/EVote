@@ -31,7 +31,10 @@ class _HomeScreenState extends State<HomeScreen> {
         } else if (state is Admin) {
           return AdminDashboard();
         }
-        return CircularProgressIndicator();
+        return Center(child: CircularProgressIndicator(
+        valueColor: new AlwaysStoppedAnimation<Color>(
+        Theme.of(context).primaryColor),
+        ));
       },
     ));
   }

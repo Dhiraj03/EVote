@@ -100,7 +100,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   Container(
                       height: 100,
                       width: 100,
-                      child: Image.asset("assets/ballot-box.png",
+                      child: Image.asset("assets/colored-ballot-box.png",
                           fit: BoxFit.contain)),
                   TextFormField(
                     controller: _emailController,

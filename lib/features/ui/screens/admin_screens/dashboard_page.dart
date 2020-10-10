@@ -10,30 +10,30 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
-return Container(
-    child: Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Dashboard',
-          style: TextStyle(color: Colors.black87),
-        ),
-      ),
-      body: BlocBuilder(
-       bloc: BlocProvider.of<AdminBloc>(context)..add(ElectionDetails()),
-       builder: (BuildContext context, AdminState state) 
-       {
-      
-
-         if(state is AdminInitial)
-         {
-           return Center(
-             child: CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-             ),
-           );
-         }
-         
-       },
-      )));
+    return Container(
+        child: Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: Text(
+                'Dashboard',
+                style: TextStyle(color: Colors.black87),
+              ),
+            ),
+            body: BlocBuilder(
+              bloc: BlocProvider.of<AdminBloc>(context)
+                ..add(GetElectionDetails()),
+              builder: (BuildContext context, AdminState state) {
+                if (state is ElectionDetailsState) {
+                  return Container();
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      valueColor: new AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).primaryColor),
+                    ),
+                  );
+                }
+              },
+            )));
+  }
 }

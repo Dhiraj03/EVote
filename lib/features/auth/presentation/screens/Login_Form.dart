@@ -100,7 +100,7 @@ class _LoginFormState extends State<LoginForm> {
                   Container(
                     height: 100,
                     width: 100,
-                    child: Image.asset("assets/ballot-box.png", fit: BoxFit.contain)),
+                    child: Image.asset("assets/colored-ballot-box.png", fit: BoxFit.contain)),
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(

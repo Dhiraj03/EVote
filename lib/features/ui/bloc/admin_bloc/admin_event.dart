@@ -46,7 +46,7 @@ class ShowResults extends AdminEvent {
   @override
   List<Object> get props => [];
 } 
-class ElectionDetails extends AdminEvent {
+class GetElectionDetails extends AdminEvent {
   @override
   List<Object> get props => [];
 }
