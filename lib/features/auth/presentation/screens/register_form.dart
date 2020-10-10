@@ -1,10 +1,10 @@
 import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_events.dart';
 import 'package:e_vote/features/auth/presentation/bloc/register_bloc/register_bloc.dart';
+import 'package:e_vote/features/auth/presentation/screens/Login_Screen.dart';
 import 'package:e_vote/features/auth/presentation/widgets/Register_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 //read login_form.dart for documentation
 class RegisterForm extends StatefulWidget {
@@ -84,6 +84,24 @@ class _RegisterFormState extends State<RegisterForm> {
             child: Form(
               child: ListView(
                 children: <Widget>[
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                        color: Color(0xFFf4511e),
+                        icon: Icon(Icons.arrow_back),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        }),
+                  ),
+                  SizedBox(height: 80),
+                  Container(
+                      height: 100,
+                      width: 100,
+                      child: Image.asset("assets/ballot-box.png",
+                          fit: BoxFit.contain)),
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
@@ -106,10 +124,14 @@ class _RegisterFormState extends State<RegisterForm> {
                     obscureText: true,
                     autocorrect: false,
                     autovalidate: true,
-                    
                     validator: (_) {
-                      return !state.isPasswordValid ? 'Invalid Password. The password must contain atleast 8 characters, one lowercase alphabet and one digit.' : null;
+                      return !state.isPasswordValid
+                          ? 'Invalid Password. The password must contain atleast 8 characters, one lowercase alphabet and one digit.'
+                          : null;
                     },
+                  ),
+                  SizedBox(
+                    height: 20,
                   ),
                   RegisterButton(
                     onPressed: isRegisterButtonEnabled(state)

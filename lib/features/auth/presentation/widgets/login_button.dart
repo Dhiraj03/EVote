@@ -13,6 +13,7 @@ final VoidCallback _onPressed;
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),
       ),
+      color: Color(0xFFf4511e),
       onPressed: _onPressed,
       child: Text('Login'),
     );

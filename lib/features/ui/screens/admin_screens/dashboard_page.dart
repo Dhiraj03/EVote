@@ -1,4 +1,6 @@
+import 'package:e_vote/features/ui/bloc/admin_bloc/admin_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -8,6 +10,30 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
-    return CircularProgressIndicator();
-  }
+return Container(
+    child: Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          'Dashboard',
+          style: TextStyle(color: Colors.black87),
+        ),
+      ),
+      body: BlocBuilder(
+       bloc: BlocProvider.of<AdminBloc>(context)..add(ElectionDetails()),
+       builder: (BuildContext context, AdminState state) 
+       {
+      
+
+         if(state is AdminInitial)
+         {
+           return Center(
+             child: CircularProgressIndicator(
+            valueColor: new AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+             ),
+           );
+         }
+         
+       },
+      )));
 }

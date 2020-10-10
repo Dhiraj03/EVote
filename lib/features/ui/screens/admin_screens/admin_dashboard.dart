@@ -50,7 +50,7 @@ class _AdminDashboardState extends State<AdminDashboard>
               tabs: [
                 Tab(icon: Icon(MaterialIcons.person_add)),
                 Tab(icon: Icon(MaterialCommunityIcons.view_dashboard)),
-                Tab(icon: Icon(FlutterIcons.vote_mco)),
+                Tab(icon: ImageIcon(AssetImage("assets/voter.png"))),
               ])),
     );
   }
