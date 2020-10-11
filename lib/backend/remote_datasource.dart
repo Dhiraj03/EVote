@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
@@ -9,7 +10,7 @@ import 'package:e_vote/models/candidate_model.dart';
 class ElectionDataSource {
   var dioClient = Dio();
   String url =
-      "https://mainnet-api.maticvigil.com/v1.0/contract/0x44d56577bdf73f9079147abcd7bb5ce2bddc53ee";
+      "https://mainnet-api.maticvigil.com/v1.0/contract/0x91bec996ba1e3382ddf17301f1e09d1719c9fdf8";
   var httpClient = HttpClient();
   String adminAddress = "0xb3eb5933e5eb4b4872142cf631a3b0c686e15216";
   // fetches the address of the admin from the blockchain
@@ -48,7 +49,7 @@ class ElectionDataSource {
     var list = List<int>.generate(count, (index) => index + 1);
     List<Candidate> result = [];
     await Future.wait(list.map((e) async {
-     await dioClient.get(url + '/displayCandidate/$e').then((value) {
+      await dioClient.get(url + '/displayCandidate/$e').then((value) {
         result.add(Candidate.fromJson(value.data["data"][0]));
       });
     }));
@@ -150,13 +151,21 @@ class ElectionDataSource {
     return response.data[0]["txHash"];
   }
 
-  Future<void> startElection() async {
-    Map<String, dynamic> map = {"onwer": adminAddress};
-    var response = await dioClient.post(url + "/startElection", data: map);
-    if (response.statusCode == 200)
-      return Right(response.data[0]["txHash"]);
-    else
-      return Left(ErrorMessage(message: response.data["error"]["message"]));
+  Future<Either<ErrorMessage, String>> startElection() async {
+    ;
+    Map<String, dynamic> map = {"owner": adminAddress};
+    try {
+      var response = await dioClient.post(url + "/startElection",
+          data: map,
+          options: Options(headers: {
+            "X-API-KEY": ["70d56934-be68-4b74-b402-f597cdbd41d9"]
+          }, contentType: Headers.formUrlEncodedContentType));
+      print('txHash');
+      return Right(response.data["data"][0]["txHash"]);
+    } catch (e) {
+      print(e.response.data["error"]);
+      return Left(ErrorMessage(message: e.response.data["error"]["message"]));
+    }
   }
 
   Future<Either<ErrorMessage, String>> vote(int id, String owner) async {

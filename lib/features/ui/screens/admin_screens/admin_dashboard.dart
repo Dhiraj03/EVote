@@ -15,18 +15,18 @@ class _AdminDashboardState extends State<AdminDashboard>
     with SingleTickerProviderStateMixin {
   PageController pageController;
   TabController tabController;
+  AdminBloc adminBloc;
   @override
   void initState() {
     pageController = PageController(initialPage: 1);
     tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+    adminBloc = AdminBloc();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AdminBloc>(
-      create: (_) => AdminBloc(),
-      child: Scaffold(
+    return  Scaffold(
           body: PageView(
             allowImplicitScrolling: true,
             onPageChanged: (index) {
@@ -51,7 +51,7 @@ class _AdminDashboardState extends State<AdminDashboard>
                 Tab(icon: Icon(MaterialIcons.person_add)),
                 Tab(icon: Icon(MaterialCommunityIcons.view_dashboard)),
                 Tab(icon: ImageIcon(AssetImage("assets/voter.png"))),
-              ])),
+              ])
     );
   }
 }

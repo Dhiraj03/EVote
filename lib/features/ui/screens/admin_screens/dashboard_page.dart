@@ -8,32 +8,186 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  AdminBloc adminBloc = AdminBloc();
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text(
-                'Dashboard',
-                style: TextStyle(color: Colors.black87),
+    return BlocProvider(
+      create: (_) => adminBloc,
+      child: Container(
+          child: Scaffold(
+              appBar: AppBar(
+                centerTitle: true,
+                title: Text(
+                  'Dashboard',
+                  style: TextStyle(color: Colors.black87),
+                ),
               ),
-            ),
-            body: BlocBuilder(
-              bloc: BlocProvider.of<AdminBloc>(context)
-                ..add(GetElectionDetails()),
-              builder: (BuildContext context, AdminState state) {
-                if (state is ElectionDetailsState) {
-                  return Container();
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      valueColor: new AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).primaryColor),
-                    ),
-                  );
-                }
-              },
-            )));
+              body: BlocConsumer<AdminBloc, AdminState>(
+                bloc: adminBloc..add(GetElectionDetails()),
+                listener: (BuildContext context, AdminState state) {
+                  if (state is AdminError) {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.red[700],
+                        content: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Icon(Icons.error),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                state.errorMessage.message,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ])));
+                  } else if (state is ElectionTxHash) {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.green,
+                        content: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              
+                              Icon(
+                                Icons.check,
+                                color: Colors.white,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Flexible(
+                                child: Text(
+                                  'TxHash:  ' + state.txHash,
+                                  style: TextStyle(color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 3,
+                                ),
+                              ),
+                            ])));
+                  }
+                },
+                builder: (BuildContext context, AdminState state) {
+                  if (state is ElectionDetailsState) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Center(
+                          child: Text('ADMIN  ADDRESS',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: Theme.of(context).primaryColor)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 12),
+                          child: Center(
+                            child: Text(state.adminAddress,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    color: Theme.of(context).accentColor)),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Center(
+                          child: Text('DESCRIPTION',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: Theme.of(context).primaryColor)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 12),
+                          child: Center(
+                              child: Text(state.description,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      color: Theme.of(context).accentColor))),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Center(
+                          child: Text('ELECTION STATE',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: Theme.of(context).primaryColor)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 12),
+                          child: Center(
+                              child: Text(state.electionState,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      color: Theme.of(context).accentColor))),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        if (state.electionState == "CREATED")
+                          Container(
+                            height: 50,
+                            width: 200,
+                            child: FlatButton(
+                                color: Theme.of(context).primaryColor,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                onPressed: () {
+                                  adminBloc..add(StartElection());
+                                },
+                                child: Text(
+                                  'Start the Election',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700),
+                                )),
+                          )
+                        else
+                          Container(
+                            height: 50,
+                            width: 150,
+                            child: FlatButton(
+                                color: Theme.of(context).primaryColor,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                onPressed: () {
+                                  BlocProvider.of<AdminBloc>(context)
+                                    ..add(StartElection());
+                                },
+                                child: Text(
+                                  'End the Election',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700),
+                                )),
+                          )
+                      ],
+                    );
+                  } else {
+                    BlocProvider.of<AdminBloc>(context)
+                      ..add(GetElectionDetails());
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: new AlwaysStoppedAnimation<Color>(
+                            Theme.of(context).primaryColor),
+                      ),
+                    );
+                  }
+                },
+              ))),
+    );
   }
 }

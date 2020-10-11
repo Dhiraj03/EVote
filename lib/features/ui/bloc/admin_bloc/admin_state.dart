@@ -25,3 +25,17 @@ class ElectionDetailsState extends AdminState {
   @override
   List<Object> get props => [adminAddress, description, electionState];
 }
+
+class ElectionTxHash extends AdminState {
+  final String txHash;
+  ElectionTxHash({@required this.txHash});
+  @override
+  List<Object> get props => [txHash];
+}
+
+class AdminError extends AdminState {
+  final ErrorMessage errorMessage;
+  AdminError({@required this.errorMessage});
+  @override
+  List<Object> get props => [errorMessage];
+}
