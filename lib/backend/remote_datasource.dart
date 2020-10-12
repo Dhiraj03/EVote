@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dartz/dartz.dart'; 
+import 'package:dartz/dartz.dart';
 import 'package:dartz/dartz_unsafe.dart';
 import 'package:dio/dio.dart';
 import 'package:e_vote/backend/errors.dart';
@@ -145,14 +145,21 @@ class ElectionDataSource {
   }
 
   //Function to endElection
-  Future<String> endElection() async {
-    Map<String, dynamic> map = {"onwer": adminAddress};
-    var response = await dioClient.post(url + "/endElection", data: map);
-    return response.data[0]["txHash"];
+  Future<Either<ErrorMessage, String>> endElection() async {
+    Map<String, dynamic> map = {"owner": adminAddress};
+    try {
+      var response = await dioClient.post(url + "/endElection",
+          data: map,
+          options: Options(headers: {
+            "X-API-KEY": ["70d56934-be68-4b74-b402-f597cdbd41d9"]
+          }, contentType: Headers.formUrlEncodedContentType));
+      return Right(response.data["data"][0]["txHash"]);
+    } catch (e) {
+      return Left(ErrorMessage(message: e.response.data["error"]["message"]));
+    }
   }
 
   Future<Either<ErrorMessage, String>> startElection() async {
-    ;
     Map<String, dynamic> map = {"owner": adminAddress};
     try {
       var response = await dioClient.post(url + "/startElection",
@@ -160,7 +167,6 @@ class ElectionDataSource {
           options: Options(headers: {
             "X-API-KEY": ["70d56934-be68-4b74-b402-f597cdbd41d9"]
           }, contentType: Headers.formUrlEncodedContentType));
-      print('txHash');
       return Right(response.data["data"][0]["txHash"]);
     } catch (e) {
       print(e.response.data["error"]);

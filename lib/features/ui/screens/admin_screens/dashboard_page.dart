@@ -201,7 +201,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       fontWeight: FontWeight.w700),
                                 )),
                           )
-                        else
+                        else if(state.electionState == "ONGOING")
                           Container(
                             height: 50,
                             width: 200,
@@ -211,7 +211,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     borderRadius: BorderRadius.circular(10)),
                                 onPressed: () {
                                   BlocProvider.of<AdminBloc>(context)
-                                    ..add(StartElection());
+                                    ..add(EndElection());
                                 },
                                 child: Text(
                                   'End the Election',
@@ -220,6 +220,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       fontWeight: FontWeight.w700),
                                 )),
                           )
+                          
                       ],
                     );
                   } else {

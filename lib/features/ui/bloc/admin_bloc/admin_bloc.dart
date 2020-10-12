@@ -37,5 +37,15 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         yield ElectionTxHash(txHash: txHash);
       });
     }
+    else if (event is EndElection) {
+      final result = await dataSource.endElection();
+      yield* result.fold((error) async* {
+        yield Loading();
+        yield AdminError(errorMessage: error);
+      }, (txHash) async* {
+        yield Loading();
+        yield ElectionTxHash(txHash: txHash);
+      });
+    }
   }
 }
