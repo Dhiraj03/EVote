@@ -10,7 +10,7 @@ import 'package:e_vote/models/candidate_model.dart';
 class ElectionDataSource {
   var dioClient = Dio();
   String url =
-      "https://mainnet-api.maticvigil.com/v1.0/contract/0x79f5a6df5969ff490707d31655614067aad6fd1f";
+      "https://mainnet-api.maticvigil.com/v1.0/contract/0xff65c4be4fbb0db63999b454bb69abbb571b92a8";
   var httpClient = HttpClient();
   String adminAddress = "0xb3eb5933e5eb4b4872142cf631a3b0c686e15216";
   // fetches the address of the admin from the blockchain
@@ -101,10 +101,14 @@ class ElectionDataSource {
       "_proposal": proposal,
       "owner": adminAddress
     };
-    var response = await dioClient.post(url + "/addCandidate", data: map);
-    if (response.statusCode == 200) {
+    try {
+      var response = await dioClient.post(url + "/addCandidate",
+          data: map,
+          options: Options(headers: {
+            "X-API-KEY": ["70d56934-be68-4b74-b402-f597cdbd41d9"]
+          }, contentType: Headers.formUrlEncodedContentType));
       return Right(response.data["data"][0]["txHash"]);
-    } else {
+    } catch (e) {
       return Left(ErrorMessage(
           message: "The registration period for candidates has ended."));
     }
