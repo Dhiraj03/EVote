@@ -39,3 +39,8 @@ class AdminError extends AdminState {
   @override
   List<Object> get props => [errorMessage];
 }
+
+class Loading extends AdminState {
+  @override
+  List<Object> get props => [];
+}

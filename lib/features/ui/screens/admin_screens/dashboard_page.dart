@@ -49,7 +49,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         content: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
-                              
                               Icon(
                                 Icons.check,
                                 color: Colors.white,
@@ -66,13 +65,60 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                               ),
                             ])));
+                  } else if (state is Loading) {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Theme.of(context).primaryColorDark,
+                        content: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                height: 35,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: new AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Flexible(
+                                child: Text(
+                                  'Loading',
+                                  style: TextStyle(color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 3,
+                                ),
+                              ),
+                            ])));
                   }
+                },
+                buildWhen: (previous, current) {
+                  if (current is AdminError ||
+                      current is Loading ||
+                      current is ElectionTxHash) {
+                    print('lol');
+                    return false;
+                  }
+                  return true;
                 },
                 builder: (BuildContext context, AdminState state) {
                   if (state is ElectionDetailsState) {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
+                        Align(
+                            alignment: Alignment.topRight,
+                            child: FlatButton.icon(
+                              splashColor: Theme.of(context).primaryColor.withOpacity(0.25),
+                                onPressed: () {
+                                  adminBloc.add(GetElectionDetails());
+                                },
+                                icon: Icon(Icons.refresh),
+                                label: Text('Refresh',
+                                    style: TextStyle(
+                                        color:
+                                            Theme.of(context).accentColor)))),
                         Center(
                           child: Text('ADMIN  ADDRESS',
                               style: TextStyle(
@@ -158,7 +204,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         else
                           Container(
                             height: 50,
-                            width: 150,
+                            width: 200,
                             child: FlatButton(
                                 color: Theme.of(context).primaryColor,
                                 shape: RoundedRectangleBorder(

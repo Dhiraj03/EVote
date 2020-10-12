@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dartz/dartz.dart';
+import 'package:dartz/dartz.dart'; 
 import 'package:dartz/dartz_unsafe.dart';
 import 'package:dio/dio.dart';
 import 'package:e_vote/backend/errors.dart';
@@ -10,7 +10,7 @@ import 'package:e_vote/models/candidate_model.dart';
 class ElectionDataSource {
   var dioClient = Dio();
   String url =
-      "https://mainnet-api.maticvigil.com/v1.0/contract/0x91bec996ba1e3382ddf17301f1e09d1719c9fdf8";
+      "https://mainnet-api.maticvigil.com/v1.0/contract/0x79f5a6df5969ff490707d31655614067aad6fd1f";
   var httpClient = HttpClient();
   String adminAddress = "0xb3eb5933e5eb4b4872142cf631a3b0c686e15216";
   // fetches the address of the admin from the blockchain
