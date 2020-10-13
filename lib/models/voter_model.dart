@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 class Voter extends Equatable {
+  final int id;
   final String name;
   final String address;
   final bool hasVoted;
@@ -9,14 +10,22 @@ class Voter extends Equatable {
   final int voteTowards;
   String delegateAddress;
   Voter(
-      {
+      {this.id,
       this.delegateAddress,
       @required this.address,
-      @required this.hasVoted,
-      @required this.name,
-      @required this.voteTowards,
+      this.hasVoted,
+      this.name,
+      this.voteTowards,
       @required this.weight});
 
   List<Object> get props =>
       [address, hasVoted, name, voteTowards, delegateAddress, weight];
+
+  factory Voter.fromJson(Map<String, dynamic> json) {
+    return Voter(
+        id: json["id"],
+        delegateAddress: json["delegate"],
+        weight: json["weight"],
+        address: json["voterAddress"]);
+  }
 }

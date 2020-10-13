@@ -16,7 +16,7 @@ contract Election {
         string name; // Name of the candidate
         string proposal; // The proposal/promises of the candidate
     }
-
+    mapping(uint => address) private voterID; // VoterID mapped to voter address
     mapping(address => Voter) private voters; //address of voter mapped to the voter struct - To view all registered voters
     mapping(uint256 => Candidate) private candidates; // ID of candidate mapped to the candidate struct - To view details of all registered candidates
     mapping(uint256 => uint256) private voteCount; // ID of the candidate mapped to the votes of the candidate privately
@@ -33,7 +33,7 @@ contract Election {
     State  electionState; // A variable of the type enum State to represent the election state
     string public description;
     uint256 public candidate_count; // Keeps a count of the registered candidates
-
+    uint256 public voter_count;
     //modifier to check if the address is of the admin's as several functions can only be accessed by the admin
     modifier checkAdmin(address owner) {
         require(
@@ -157,6 +157,8 @@ contract Election {
         checkIfCreated
         checkNotRegistered(_voter)
     {
+        voter_count++;
+        voterID[voter_count] = _voter;
         voters[_voter].weight = 1;
         emit AddedAVoter(_voter);
     }
@@ -271,5 +273,21 @@ contract Election {
         )
     {
         return (_ID, candidates[_ID].name, voteCount[_ID]);
+    }
+
+    function getVoter(uint ID, address owner)  public view checkAdmin(owner)
+    returns (
+        uint256 id,
+        address voterAddress,
+        address delegate,
+        uint256 weight
+    )
+    {
+        return (
+            ID,
+            voterID[ID],
+            voters[voterID[ID]].delegate,
+            voters[voterID[ID]].weight
+        );
     }
 }

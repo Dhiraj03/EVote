@@ -6,11 +6,12 @@ import 'package:dartz/dartz_unsafe.dart';
 import 'package:dio/dio.dart';
 import 'package:e_vote/backend/errors.dart';
 import 'package:e_vote/models/candidate_model.dart';
+import 'package:e_vote/models/voter_model.dart';
 
 class ElectionDataSource {
   var dioClient = Dio();
   String url =
-      "https://mainnet-api.maticvigil.com/v1.0/contract/0xff65c4be4fbb0db63999b454bb69abbb571b92a8";
+      "https://mainnet-api.maticvigil.com/v1.0/contract/0xca92d88f618d3d29e891612e30cfeef9ca88d355";
   var httpClient = HttpClient();
   String adminAddress = "0xb3eb5933e5eb4b4872142cf631a3b0c686e15216";
   // fetches the address of the admin from the blockchain
@@ -22,6 +23,12 @@ class ElectionDataSource {
   //Fetches the count of registered candidates in the election
   Future<int> getCandidateCount() async {
     var response = await dioClient.get(url + "/candidate_count");
+    return response.data["data"][0]["uint256"].toInt();
+  }
+
+  //Fetches the count of regsitered voters in the elction
+  Future<int> getVoterCount() async {
+    var response = await dioClient.get(url + "/voter_count");
     return response.data["data"][0]["uint256"].toInt();
   }
 
@@ -53,7 +60,27 @@ class ElectionDataSource {
         result.add(Candidate.fromJson(value.data["data"][0]));
       });
     }));
-    print('length' + result.length.toString());
+    return result;
+  }
+
+  //Fetches the details of a voter - ID, Address, DelegateAddress and Weight
+  Future<Voter> getVoter(int id, String owner) async {
+    var response = await dioClient.get(url + "/getVoter/$id/$owner");
+    return Voter.fromJson(
+      response.data["data"][0]
+    );
+  }
+
+  //Fetches the details of all voters
+  Future<List<Voter>> getAllVoters(String owner) async {
+    int count = await getVoterCount();
+    var list = List<int>.generate(count, (index) => index + 1);
+    List<Voter> result = [];
+    await Future.wait(list.map((e) async {
+      await dioClient.get(url + '/getVoter/$e/$owner').then((value) {
+        result.add(Voter.fromJson(value.data["data"][0]));
+      });
+    }));
     return result;
   }
 
