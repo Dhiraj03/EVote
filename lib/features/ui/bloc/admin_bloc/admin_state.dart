@@ -12,6 +12,15 @@ class AdminInitial extends AdminState {}
 class CandidatesList extends AdminState {
   final List<Candidate> candidates;
   CandidatesList({@required this.candidates});
+  @override
+  List<Object> get props => [];
+}
+
+class VotersList extends AdminState {
+  final List<Voter> voters;
+  VotersList({@required this.voters});
+  @override
+  List<Object> get props => [];
 }
 
 class ElectionDetailsState extends AdminState {

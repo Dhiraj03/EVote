@@ -65,22 +65,22 @@ class ElectionDataSource {
 
   //Fetches the details of a voter - ID, Address, DelegateAddress and Weight
   Future<Voter> getVoter(int id, String owner) async {
-    var response = await dioClient.get(url + "/getVoter/$id/$owner");
-    return Voter.fromJson(
-      response.data["data"][0]
-    );
+    var response = await dioClient.get(url + "/getVoter/$id/$adminAddress");
+    return Voter.fromJson(response.data["data"][0]);
   }
 
   //Fetches the details of all voters
-  Future<List<Voter>> getAllVoters(String owner) async {
+  Future<List<Voter>> getAllVoters() async {
     int count = await getVoterCount();
     var list = List<int>.generate(count, (index) => index + 1);
     List<Voter> result = [];
     await Future.wait(list.map((e) async {
-      await dioClient.get(url + '/getVoter/$e/$owner').then((value) {
+      await dioClient.get(url + '/getVoter/$e/$adminAddress').then((value) {
         result.add(Voter.fromJson(value.data["data"][0]));
       });
     }));
+    print('hah');
+    print(result.length);
     return result;
   }
 
@@ -144,15 +144,19 @@ class ElectionDataSource {
   //Function to register a new voter
   Future<Either<ErrorMessage, String>> addVoter(String voter) async {
     Map<String, dynamic> map = {"_voter": voter, "owner": adminAddress};
-    var response = await dioClient.post(url + "/addVoter", data: map);
-    if (response.statusCode == 200) {
+    try {
+      var response = await dioClient.post(url + "/addVoter",
+          data: map,
+          options: Options(headers: {
+            "X-API-KEY": ["70d56934-be68-4b74-b402-f597cdbd41d9"]
+          }, contentType: Headers.formUrlEncodedContentType));
       return Right(response.data["data"][0]["txHash"]);
-    } else {
-      if (response.data["error"]["message"] == "DataEncodingError")
+    } catch (e) {
+      if (e.response.data["error"]["message"] == "DataEncodingError")
         return Left(
             ErrorMessage(message: "Invalid arguments. Please try again."));
       else if (voter == adminAddress)
-        return Left(ErrorMessage(message: response.data["error"]["message"]));
+        return Left(ErrorMessage(message: e.response.data["error"]["message"]));
       else
         return Left(ErrorMessage(
             message: "The registration period for candidates has ended."));

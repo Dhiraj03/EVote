@@ -3,6 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:e_vote/backend/errors.dart';
 import 'package:e_vote/backend/remote_datasource.dart';
 import 'package:e_vote/models/candidate_model.dart';
+import 'package:e_vote/models/voter_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 part 'admin_event.dart';
@@ -18,6 +19,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     if (event is DisplayCandidates) {
       List<Candidate> candidates = await dataSource.getAllCandidates();
       yield CandidatesList(candidates: candidates);
+    } else if (event is DisplayVoters) {
+      print('lolz');
+      List<Voter> voters = await dataSource.getAllVoters();
+      yield VotersList(voters: voters);
     } else if (event is GetElectionDetails) {
       final String description = await dataSource.getDescription();
       final String adminAddress = await dataSource.adminAddress;
@@ -47,6 +52,15 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       });
     } else if (event is AddCandidate) {
       final result = await dataSource.addCandidate(event.name, event.proposal);
+      yield* result.fold((error) async* {
+        yield Loading();
+        yield AdminError(errorMessage: error);
+      }, (txHash) async* {
+        yield Loading();
+        yield ElectionTxHash(txHash: txHash);
+      });
+    } else if (event is AddVoter) {
+      final result = await dataSource.addVoter(event.voterAddress);
       yield* result.fold((error) async* {
         yield Loading();
         yield AdminError(errorMessage: error);

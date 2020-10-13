@@ -30,6 +30,11 @@ class AddCandidate extends AdminEvent {
   List<Object> get props => [name, proposal];
 }
 
+class DisplayVoters extends AdminEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class AddVoter extends AdminEvent {
   final String voterAddress;
   AddVoter({@required this.voterAddress});
@@ -40,15 +45,14 @@ class AddVoter extends AdminEvent {
 class ShowWinner extends AdminEvent {
   @override
   List<Object> get props => [];
-} 
+}
 
 class ShowResults extends AdminEvent {
   @override
   List<Object> get props => [];
-} 
+}
+
 class GetElectionDetails extends AdminEvent {
   @override
   List<Object> get props => [];
 }
-
-
