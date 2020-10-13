@@ -16,6 +16,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Container(
           child: Scaffold(
               appBar: AppBar(
+                actions: <Widget>[
+                  IconButton(
+                      icon: Icon(
+                        Icons.refresh,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        adminBloc.add(GetElectionDetails());
+                      })
+                ],
                 centerTitle: true,
                 title: Text(
                   'Dashboard',
@@ -107,18 +117,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Align(
-                            alignment: Alignment.topRight,
-                            child: FlatButton.icon(
-                              splashColor: Theme.of(context).primaryColor.withOpacity(0.25),
-                                onPressed: () {
-                                  adminBloc.add(GetElectionDetails());
-                                },
-                                icon: Icon(Icons.refresh),
-                                label: Text('Refresh',
-                                    style: TextStyle(
-                                        color:
-                                            Theme.of(context).accentColor)))),
                         Center(
                           child: Text('ADMIN  ADDRESS',
                               style: TextStyle(
@@ -201,7 +199,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       fontWeight: FontWeight.w700),
                                 )),
                           )
-                        else if(state.electionState == "ONGOING")
+                        else if (state.electionState == "ONGOING")
                           Container(
                             height: 50,
                             width: 200,
@@ -220,7 +218,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       fontWeight: FontWeight.w700),
                                 )),
                           )
-                          
                       ],
                     );
                   } else {

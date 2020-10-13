@@ -101,6 +101,13 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                     context: context);
               }),
           appBar: AppBar(
+            actions: <Widget>[
+              IconButton(
+                  icon: Icon(Icons.refresh, color: Colors.black,),
+                  onPressed: () {
+                    adminBloc.add(DisplayCandidates());
+                  })
+            ],
             centerTitle: true,
             title: Text(
               'Candidates',
