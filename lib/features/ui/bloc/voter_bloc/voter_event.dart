@@ -7,6 +7,11 @@ abstract class VoterEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class ShowElectionDetails extends VoterEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class DisplayCandidates extends VoterEvent {
   @override
   List<Object> get props => [];

@@ -23,7 +23,7 @@ class _ElectionResultsPageState extends State<ElectionResultsPage> {
         child: Scaffold(
           appBar: AppBar(
             actions: <Widget>[
-              IconButton(
+              IconButton( 
                   icon: Icon(
                     Icons.refresh,
                     color: Colors.black,
