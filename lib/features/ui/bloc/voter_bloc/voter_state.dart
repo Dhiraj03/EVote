@@ -39,3 +39,10 @@ class VoterError extends VoterState {
   @override
   List<Object> get props => [errorMessage];
 }
+
+class CandidatesList extends VoterState {
+  final List<Candidate> candidates;
+  CandidatesList({@required this.candidates});
+  @override
+  List<Object> get props => [];
+}

@@ -1,6 +1,8 @@
+import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_barrel_bloc.dart';
 import 'package:e_vote/features/ui/bloc/admin_bloc/admin_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 
 class AddVoterScreen extends StatefulWidget {
   @override
@@ -94,11 +96,11 @@ class _AddVoterScreenState extends State<AddVoterScreen> {
                   }),
               IconButton(
               icon: Icon(
-                Icons.refresh,
+                MaterialCommunityIcons.logout,
                 color: Colors.black,
               ),
               onPressed: () {
-                adminBloc.add(GetElectionDetails());
+                BlocProvider.of<AuthBloc>(context)..add(LoggedOut());
               }),
             ],
             centerTitle: true,

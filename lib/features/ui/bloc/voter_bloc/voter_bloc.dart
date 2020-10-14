@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:e_vote/backend/errors.dart';
 import 'package:e_vote/backend/remote_datasource.dart';
+import 'package:e_vote/models/candidate_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -25,6 +26,9 @@ class VoterBloc extends Bloc<VoterEvent, VoterState> {
           adminAddress: adminAddress,
           description: description,
           electionState: electionsState);
+    } else if (event is DisplayCandidates) {
+      List<Candidate> candidates = await dataSource.getAllCandidates();
+      yield CandidatesList(candidates: candidates);
     }
   }
 }
