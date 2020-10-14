@@ -45,3 +45,8 @@ class ElectionDetails extends VoterEvent {
   @override
   List<Object> get props => [];
 }
+
+class GetVoterProfile extends VoterEvent {
+  @override
+  List<Object> get props => [];
+}

@@ -223,4 +223,9 @@ class ElectionDataSource {
         return Left(ErrorMessage(message: response.data["error"]["message"]));
     }
   }
+
+  Future<Voter> getVoterProfile(String address) async {
+    var response = await dioClient.get(url + "/voterProfile/$address");
+    return Voter.profileJson(response.data["data"][0], address);
+  }
 }

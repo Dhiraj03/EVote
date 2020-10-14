@@ -4,6 +4,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_vote/features/auth/data/user_repository.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -15,19 +16,18 @@ class FirestoreRepository {
 
   //used to reference the collection of users
   final CollectionReference ref = firestoreRepository.collection('users');
-
   /*Function to create a document for a new user (called when a new user registers)
   ENSURE that EMAIL IS UNIQUE (If not, add UID field)
    */
   void createNewUser(String email) {
     var privateKey = generateNewPrivateKey(Random.secure());
-    ref.add(<String, dynamic>{
+    var uid = ref.add(<String, dynamic>{
       "email": email,
       "address": EthereumAddress.fromPublicKey(privateKeyToPublic(privateKey))
           .toString(),
-      "admin" : false,
-      "hasVoted" : false,
-      "delegate" : null
+      "admin": false,
+      "hasVoted": false,
+      "delegate": null
     });
   }
 
@@ -42,4 +42,8 @@ class FirestoreRepository {
       return false;
   }
 
+  Future<String> getVoterAddress(String email) async {
+    var doc = await ref.where("email", isEqualTo: email).getDocuments();
+    return doc.documents[0].data["address"];
+  }
 }

@@ -4,6 +4,7 @@ import 'package:e_vote/features/ui/screens/voter_screens/delegate_voter.dart';
 import 'package:e_vote/features/ui/screens/voter_screens/election_results_page.dart';
 import 'package:e_vote/features/ui/screens/voter_screens/show_candidates.dart';
 import 'package:e_vote/features/ui/screens/voter_screens/voter_dashboard_page.dart';
+import 'package:e_vote/features/ui/screens/voter_screens/voter_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
@@ -19,8 +20,8 @@ class _VoterDashboardState extends State<VoterDashboard>
   VoterBloc voterBloc;
   @override
   void initState() {
-    pageController = PageController(initialPage: 0);
-    tabController = TabController(length: 4, vsync: this);
+    pageController = PageController(initialPage: 2);
+    tabController = TabController(length: 5, vsync: this, initialIndex: 2);
     voterBloc = VoterBloc();
     super.initState();
   }
@@ -37,6 +38,7 @@ class _VoterDashboardState extends State<VoterDashboard>
         children: <Widget>[
           ElectionResults(),
           ShowCandidates(),
+          VoterProfile(),
           VoterDashboardPage(),
           DelegateVoterPage()
         ],
@@ -53,6 +55,7 @@ class _VoterDashboardState extends State<VoterDashboard>
     tabs: [
       Tab(icon: ImageIcon(AssetImage("assets/winning.png")),),
       Tab(icon: ImageIcon(AssetImage("assets/ballot-box.png"))),
+      Tab(icon: Icon(Icons.person),),
       Tab(icon: Icon(MaterialCommunityIcons.view_dashboard)),
       Tab(icon: ImageIcon(AssetImage("assets/voter.png"))),
     ]),

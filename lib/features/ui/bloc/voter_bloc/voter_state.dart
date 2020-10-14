@@ -2,7 +2,7 @@ part of 'voter_bloc.dart';
 
 abstract class VoterState extends Equatable {
   const VoterState();
-  
+
   @override
   List<Object> get props => [];
 }
@@ -45,4 +45,11 @@ class CandidatesList extends VoterState {
   CandidatesList({@required this.candidates});
   @override
   List<Object> get props => [];
+}
+
+class VoterProfileState extends VoterState {
+  final Voter voterProfile;
+  VoterProfileState({@required this.voterProfile});
+  @override
+  List<Object> get props => [voterProfile];
 }

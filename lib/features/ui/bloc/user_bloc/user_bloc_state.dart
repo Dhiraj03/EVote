@@ -9,6 +9,6 @@ abstract class UserBlocState extends Equatable {
 
 class UserBlocInitial extends UserBlocState {}
 
-class Voter extends UserBlocState {}
+class VoterState extends UserBlocState {}
 
 class Admin extends UserBlocState {}

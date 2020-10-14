@@ -20,7 +20,7 @@ class UserBlocBloc extends Bloc<UserBlocEvent, UserBlocState> {
     if (event is IdentifyUser) {
       final String email = await userRepository.getUserEmail();
       if (await repo.isVoter(email) == true)
-        yield Voter();
+        yield VoterState();
       else
         yield Admin();
     }

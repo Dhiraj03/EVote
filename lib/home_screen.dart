@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bloc: userBloc..add(IdentifyUser()),
       listener: (context, state) {},
       builder: (context, state) {
-        if (state is Voter) {
+        if (state is VoterState) {
           return VoterDashboard();
         } else if (state is Admin) {
           return AdminDashboard();

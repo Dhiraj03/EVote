@@ -28,4 +28,15 @@ class Voter extends Equatable {
         weight: json["weight"],
         address: json["voterAddress"]);
   }
+
+  factory Voter.profileJson(Map<String, dynamic> json, String voterAddress) {
+    return Voter(
+      address: voterAddress, 
+      weight: json["weight"],
+      delegateAddress: json["delegate"],
+      name: json["name"],
+      voteTowards: json["votedTowards"],
+      id: json["id"]
+      );
+  }
 }

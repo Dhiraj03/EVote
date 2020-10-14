@@ -1,6 +1,7 @@
 
 import 'package:e_vote/features/ui/bloc/user_bloc/user_bloc_bloc.dart';
 import 'package:e_vote/models/candidate_model.dart';
+import 'package:e_vote/models/voter_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 

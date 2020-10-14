@@ -57,6 +57,7 @@ class UserRepository {
   }
 
   Future<String> getUserEmail() async {
+    print('lol');
     return (await _firebaseAuth.currentUser()).email;
   }
 }
