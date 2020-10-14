@@ -290,4 +290,29 @@ contract Election {
             voters[voterID[ID]].weight
         );
     }
+
+    function voterProfile(address voterAddress) public view 
+    returns (
+        uint256 id,
+        address delegate,
+        uint256 weight,
+        uint256 votedTowards,
+        string memory name
+        )
+    {
+         
+        for(uint256 i = 1; i<= voter_count; i++)
+        {
+            if(voterAddress == voterID[i])
+            {
+                return (
+                    i,
+                    voters[voterID[i]].delegate,
+                    voters[voterID[i]].weight,
+                    voters[voterID[i]].voteTowards,
+                    candidates[voters[voterID[i]].voteTowards].name
+                    );
+            }
+        }
+    }
 }
