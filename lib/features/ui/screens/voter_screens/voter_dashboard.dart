@@ -52,7 +52,7 @@ class _VoterDashboardState extends State<VoterDashboard>
     },
     tabs: [
       Tab(icon: ImageIcon(AssetImage("assets/winning.png")),),
-      Tab(icon: Icon(MaterialIcons.person_add)),
+      Tab(icon: ImageIcon(AssetImage("assets/ballot-box.png"))),
       Tab(icon: Icon(MaterialCommunityIcons.view_dashboard)),
       Tab(icon: ImageIcon(AssetImage("assets/voter.png"))),
     ]),
