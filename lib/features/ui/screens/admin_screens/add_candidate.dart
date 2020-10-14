@@ -106,7 +106,15 @@ class _AddCandidateScreenState extends State<AddCandidateScreen> {
                   icon: Icon(Icons.refresh, color: Colors.black,),
                   onPressed: () {
                     adminBloc.add(DisplayCandidates());
-                  })
+                  }),
+              IconButton(
+              icon: Icon(
+                Icons.refresh,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                adminBloc.add(GetElectionDetails());
+              }),
             ],
             centerTitle: true,
             title: Text(

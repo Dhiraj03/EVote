@@ -91,7 +91,15 @@ class _AddVoterScreenState extends State<AddVoterScreen> {
                   ),
                   onPressed: () {
                     adminBloc.add(DisplayVoters());
-                  })
+                  }),
+              IconButton(
+              icon: Icon(
+                Icons.refresh,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                adminBloc.add(GetElectionDetails());
+              }),
             ],
             centerTitle: true,
             title: Text(

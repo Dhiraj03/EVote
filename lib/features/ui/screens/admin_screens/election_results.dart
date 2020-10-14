@@ -30,7 +30,15 @@ class _ElectionResultsPageState extends State<ElectionResultsPage> {
                   ),
                   onPressed: () {
                     adminBloc.add(ShowResults());
-                  })
+                  }),
+              IconButton(
+              icon: Icon(
+                Icons.refresh,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                adminBloc.add(GetElectionDetails());
+              }),
             ],
             centerTitle: true,
             title: Text(

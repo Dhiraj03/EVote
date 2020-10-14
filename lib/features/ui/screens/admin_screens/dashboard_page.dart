@@ -1,6 +1,9 @@
+import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:e_vote/features/auth/presentation/bloc/auth_bloc/auth_events.dart';
 import 'package:e_vote/features/ui/bloc/admin_bloc/admin_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -17,6 +20,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Scaffold(
               appBar: AppBar(
                 actions: <Widget>[
+                  
                   IconButton(
                       icon: Icon(
                         Icons.refresh,
@@ -24,7 +28,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       onPressed: () {
                         adminBloc.add(GetElectionDetails());
-                      })
+                      }),
+                  IconButton(
+                  icon: Icon(
+                    MaterialCommunityIcons.logout,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    BlocProvider.of<AuthBloc>(context)..add(LoggedOut());
+                  }),
                 ],
                 centerTitle: true,
                 title: Text(
