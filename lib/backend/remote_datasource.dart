@@ -11,7 +11,7 @@ import 'package:e_vote/models/voter_model.dart';
 class ElectionDataSource {
   var dioClient = Dio();
   String url =
-      "https://mainnet-api.maticvigil.com/v1.0/contract/0xca92d88f618d3d29e891612e30cfeef9ca88d355";
+      "https://mainnet-api.maticvigil.com/v1.0/contract/0x4cfe1ff34147ccee09a1b2f018826b604ce7c17b";
   var httpClient = HttpClient();
   String adminAddress = "0xb3eb5933e5eb4b4872142cf631a3b0c686e15216";
   // fetches the address of the admin from the blockchain
