@@ -298,7 +298,12 @@ class _AddVoterScreenState extends State<AddVoterScreen> {
                         );
                       });
                 } else {
-                  return CircularProgressIndicator();
+                  return Center(
+                    child: CircularProgressIndicator(
+                      valueColor: new AlwaysStoppedAnimation<Color>(
+                          Theme.of(context).primaryColor),
+                    ),
+                  );
                 }
               }),
         ),

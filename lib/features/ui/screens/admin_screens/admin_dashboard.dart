@@ -2,6 +2,7 @@ import 'package:e_vote/features/ui/bloc/admin_bloc/admin_bloc.dart';
 import 'package:e_vote/features/ui/screens/admin_screens/add_candidate.dart';
 import 'package:e_vote/features/ui/screens/admin_screens/add_voter.dart';
 import 'package:e_vote/features/ui/screens/admin_screens/dashboard_page.dart';
+import 'package:e_vote/features/ui/screens/admin_screens/election_results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -18,8 +19,8 @@ class _AdminDashboardState extends State<AdminDashboard>
   AdminBloc adminBloc;
   @override
   void initState() {
-    pageController = PageController(initialPage: 1);
-    tabController = TabController(length: 3, vsync: this, initialIndex: 1);
+    pageController = PageController(initialPage: 2);
+    tabController = TabController(length: 4, vsync: this, initialIndex: 2);
     adminBloc = AdminBloc();
     super.initState();
   }
@@ -34,6 +35,7 @@ class _AdminDashboardState extends State<AdminDashboard>
             },
             controller: pageController,
             children: <Widget>[
+              ElectionResultsPage(),
               AddCandidateScreen(),
               DashboardScreen(),
               AddVoterScreen()
@@ -48,6 +50,7 @@ class _AdminDashboardState extends State<AdminDashboard>
                 pageController.jumpToPage(index);
               },
               tabs: [
+                Tab(icon: ImageIcon(AssetImage("assets/winning.png")),),
                 Tab(icon: Icon(MaterialIcons.person_add)),
                 Tab(icon: Icon(MaterialCommunityIcons.view_dashboard)),
                 Tab(icon: ImageIcon(AssetImage("assets/voter.png"))),

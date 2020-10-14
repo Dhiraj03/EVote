@@ -53,3 +53,11 @@ class Loading extends AdminState {
   @override
   List<Object> get props => [];
 }
+
+class Results extends AdminState {
+  final List<Candidate> results;
+  final Candidate winner;
+  Results({@required this.results, @required this.winner});
+  @override
+  List<Object> get props => [results, winner];
+}

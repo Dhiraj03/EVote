@@ -112,12 +112,13 @@ class ElectionDataSource {
 
   //Returns the winner of the election
   Future<Either<ErrorMessage, Candidate>> getWinner() async {
-    var response = await dioClient.get(url + "/showWinner");
-    if (response.statusCode == 400) {
-      return Left(
-          ErrorMessage(message: response.data["error"]["details"]["message"]));
+    try {
+      var response = await dioClient.get(url + "/showWinner");
+      return Right(Candidate.winner(response.data["data"][0]));
+    } catch (e) {
+      return Left(ErrorMessage(
+          message: e.response.data["error"]["details"]["message"]));
     }
-    return Right(Candidate.winner(response.data["data"][0]));
   }
 
   //Function to register a new candidate
