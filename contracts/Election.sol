@@ -73,8 +73,12 @@ contract Election {
     //modifier to check if a voter is a valid voter
     modifier checkIfVoterValid(address owner) {
         require(
-            !voters[owner].hasVoted && voters[owner].weight > 0,
-            "Voter has already voted or delegated their vote."
+            !voters[owner].hasVoted,
+            "Voter has already voted."
+        );
+        require(
+            voters[owner].weight == 0,
+            "Voter has not been registered or already delegated their vote."
         );
         _;
     }

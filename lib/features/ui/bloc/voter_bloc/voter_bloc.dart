@@ -5,6 +5,7 @@ import 'package:e_vote/backend/errors.dart';
 import 'package:e_vote/backend/remote_datasource.dart';
 import 'package:e_vote/database/firestore_repository.dart';
 import 'package:e_vote/features/auth/data/user_repository.dart';
+import 'package:e_vote/features/ui/bloc/admin_bloc/admin_bloc.dart';
 import 'package:e_vote/features/ui/bloc/user_bloc/user_bloc_bloc.dart';
 import 'package:e_vote/models/candidate_model.dart';
 import 'package:e_vote/models/voter_model.dart';
@@ -37,10 +38,11 @@ class VoterBloc extends Bloc<VoterEvent, VoterState> {
       yield CandidatesList(candidates: candidates);
     } else if (event is GetVoterProfile) {
       String email = await userRepository.getUserEmail();
-      String address =  await repo.getVoterAddress(email);
+      String address = await repo.getVoterAddress(email);
       Voter voterProfile = await dataSource.getVoterProfile(address);
+      print(voterProfile.delegateAddress);
       yield VoterProfileState(voterProfile: voterProfile, address: address);
-    }else if (event is ShowResults) {
+    } else if (event is ShowResults) {
       final results = await dataSource.showResults();
       final winner = await dataSource.getWinner();
       yield* results.fold((e) async* {
@@ -51,6 +53,18 @@ class VoterBloc extends Bloc<VoterEvent, VoterState> {
         }, (response) async* {
           yield Results(results: results, winner: response);
         });
+      });
+    } else if (event is DelegateVote) {
+      String email = await userRepository.getUserEmail();
+      String ownerAddress = await repo.getVoterAddress(email);
+      final results =
+          await dataSource.delegateVoter(event.delegateAddress, ownerAddress);
+      yield* results.fold((e) async* {
+        yield Loading();
+        yield VoterError(errorMessage: e);
+      }, (response) async* {
+        yield Loading();
+        yield ElectionTxHash(txHash: response);
       });
     }
   }

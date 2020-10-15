@@ -11,7 +11,7 @@ import 'package:e_vote/models/voter_model.dart';
 class ElectionDataSource {
   var dioClient = Dio();
   String url =
-      "https://mainnet-api.maticvigil.com/v1.0/contract/0x4cfe1ff34147ccee09a1b2f018826b604ce7c17b";
+      "https://mainnet-api.maticvigil.com/v1.0/contract/0xd6ccca0e2f6ad01623c0dc94194f8f1c04feb20e";
   var httpClient = HttpClient();
   String adminAddress = "0xb3eb5933e5eb4b4872142cf631a3b0c686e15216";
   // fetches the address of the admin from the blockchain
@@ -167,16 +167,21 @@ class ElectionDataSource {
   //Function to delegate your vote to someone else
   Future<Either<ErrorMessage, String>> delegateVoter(
       String delegate, String owner) async {
+    print(delegate + "   " + owner);
     Map<String, dynamic> map = {"_delegate": delegate, "owner": owner};
-    var response = await dioClient.post(url + "/delegateVoter", data: map);
-    if (response.statusCode == 200) {
+    try {
+      var response = await dioClient.post(url + "/delegateVote",
+          data: map,
+          options: Options(headers: {
+            "X-API-KEY": ["70d56934-be68-4b74-b402-f597cdbd41d9"]
+          }, contentType: Headers.formUrlEncodedContentType));
       return Right(response.data["data"][0]["txHash"]);
-    } else {
-      if (response.data["error"]["message"] == "DataEncodingError")
+    } catch (e) {
+      if (e.response.data["error"]["message"] == "DataEncodingError")
         return Left(
             ErrorMessage(message: "Invalid arguments. Please try again."));
       else
-        return Left(ErrorMessage(message: response.data["error"]["message"]));
+        return Left(ErrorMessage(message: e.response.data["error"]["message"]));
     }
   }
 
