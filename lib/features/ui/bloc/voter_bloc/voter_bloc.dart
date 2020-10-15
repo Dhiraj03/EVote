@@ -39,7 +39,7 @@ class VoterBloc extends Bloc<VoterEvent, VoterState> {
       String email = await userRepository.getUserEmail();
       String address =  await repo.getVoterAddress(email);
       Voter voterProfile = await dataSource.getVoterProfile(address);
-      yield VoterProfileState(voterProfile: voterProfile);
+      yield VoterProfileState(voterProfile: voterProfile, address: address);
     }
   }
 }

@@ -49,7 +49,8 @@ class CandidatesList extends VoterState {
 
 class VoterProfileState extends VoterState {
   final Voter voterProfile;
-  VoterProfileState({@required this.voterProfile});
+  final String address;
+  VoterProfileState({@required this.voterProfile, @required this.address});
   @override
-  List<Object> get props => [voterProfile];
+  List<Object> get props => [voterProfile, address];
 }
