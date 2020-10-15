@@ -40,6 +40,18 @@ class VoterBloc extends Bloc<VoterEvent, VoterState> {
       String address =  await repo.getVoterAddress(email);
       Voter voterProfile = await dataSource.getVoterProfile(address);
       yield VoterProfileState(voterProfile: voterProfile, address: address);
+    }else if (event is ShowResults) {
+      final results = await dataSource.showResults();
+      final winner = await dataSource.getWinner();
+      yield* results.fold((e) async* {
+        yield VoterError(errorMessage: e);
+      }, (results) async* {
+        yield* winner.fold((e) async* {
+          yield VoterError(errorMessage: e);
+        }, (response) async* {
+          yield Results(results: results, winner: response);
+        });
+      });
     }
   }
 }

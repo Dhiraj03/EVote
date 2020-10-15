@@ -54,3 +54,11 @@ class VoterProfileState extends VoterState {
   @override
   List<Object> get props => [voterProfile, address];
 }
+
+class Results extends VoterState {
+  final List<Candidate> results;
+  final Candidate winner;
+  Results({@required this.results, @required this.winner});
+  @override
+  List<Object> get props => [results, winner];
+}
