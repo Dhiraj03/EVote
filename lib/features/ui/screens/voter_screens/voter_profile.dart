@@ -93,7 +93,9 @@ class _VoterProfileState extends State<VoterProfile> {
                                     vertical: 10.0, horizontal: 12),
                                 child: Center(
                                     child: Text(
-                                        state.voterProfile.id.toString(),
+                                        state.voterProfile.id == 0
+                                            ? "Unregistered"
+                                            : state.voterProfile.id.toString(),
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontSize: 20,
@@ -139,8 +141,13 @@ class _VoterProfileState extends State<VoterProfile> {
                                     vertical: 10.0, horizontal: 12),
                                 child: Center(
                                     child: Text(
-                                        state.voterProfile.delegateAddress
-                                            .toString(),
+                                        BigInt.parse(state.voterProfile
+                                                        .delegateAddress)
+                                                    .toInt() ==
+                                                0
+                                            ? "Not Delegated"
+                                            : state.voterProfile.delegateAddress
+                                                .toString(),
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontSize: 20,
@@ -163,7 +170,13 @@ class _VoterProfileState extends State<VoterProfile> {
                                     vertical: 10.0, horizontal: 12),
                                 child: Center(
                                     child: Text(
-                                        state.voterProfile.weight.toString(),
+                                        state.voterProfile.weight == 0
+                                            ? ( BigInt.parse(state.voterProfile
+                                                    .delegateAddress)
+                                                .toInt() ==
+                                            0 ? "Unregistered" : "Vote delegated")
+                                            : state.voterProfile.weight
+                                                .toString(),
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontSize: 20,
@@ -187,7 +200,10 @@ class _VoterProfileState extends State<VoterProfile> {
                                 child: Center(
                                     child: Text(
                                         state.voterProfile.voteTowards == 0
-                                            ? "Not voted"
+                                            ? ( BigInt.parse(state.voterProfile
+                                                    .delegateAddress)
+                                                .toInt() ==
+                                            0 ? "Not voted yet" : "Vote delegated")
                                             : state.voterProfile.voteTowards
                                                 .toString(),
                                         textAlign: TextAlign.center,
@@ -200,7 +216,6 @@ class _VoterProfileState extends State<VoterProfile> {
                               SizedBox(
                                 height: 20,
                               ),
-                             
                             ])),
                       );
                     } else {

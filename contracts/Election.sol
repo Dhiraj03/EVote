@@ -218,6 +218,7 @@ contract Election {
         public
         checkNotComplete
         checkIfVoterValid(owner)
+        checkIfVoterValid(_delegate)
         checkNotAdmin(owner)
     {
         require(_delegate != owner, "self delegation is not allowed");
@@ -233,13 +234,15 @@ contract Election {
         voters[owner].delegate = to;
         emit DelegatedSuccessfully(_delegate);
         voters[owner].hasVoted = true;
-
+        
         if (voters[to].hasVoted) {
             // if delegate has already voted
             // voters vote is directly added to candidates vote count
             voteCount[voters[to].voteTowards] += voters[owner].weight;
+            voters[owner].weight = 0;
         } else {
             voters[to].weight += voters[owner].weight;
+            voters[owner].weight = 0;
         }
     }
 
