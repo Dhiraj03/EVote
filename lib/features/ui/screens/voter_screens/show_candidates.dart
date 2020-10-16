@@ -164,70 +164,81 @@ class _ShowCandidatesState extends State<ShowCandidates> {
                                                               7)),
                                                   height: 180,
                                                   width: 300,
-                                                  child:
-                                                      Column(children: <Widget>[
-                                                    Container(
-                                                      padding: EdgeInsets.only(
-                                                          top: 15,
-                                                          left: 15,
-                                                          bottom: 10),
-                                                      width: 300,
-                                                      color: Theme.of(context)
-                                                          .primaryColor,
-                                                      child: Text(
-                                                        'E-Vote',
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontSize: 25),
-                                                      ),
-                                                    ),
-                                                    Flexible(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 15,
-                                                                left: 15,
-                                                                bottom: 10),
-                                                        child: Text(
-                                                          'Are you sure you want to vote for Candidate ${state.candidates[i].id}?',
-                                                          style: TextStyle(
-                                                              fontSize: 18),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceAround,
+                                                  child: Column(
                                                       children: <Widget>[
-                                                        FlatButton(
-                                                            onPressed: () {},
-                                                            child: Text('YES',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        17,
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .primaryColor
-                                                                        .withOpacity(
-                                                                            0.9)))),
-                                                        FlatButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: Text('NO',
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 15,
+                                                                  left: 15,
+                                                                  bottom: 10),
+                                                          width: 300,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .primaryColor,
+                                                          child: Text(
+                                                            'E-Vote',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontSize: 25),
+                                                          ),
+                                                        ),
+                                                        Flexible(
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 15,
+                                                                    left: 15,
+                                                                    bottom: 10),
+                                                            child: Text(
+                                                              'Are you sure you want to vote for Candidate ${state.candidates[i].id}?',
                                                               style: TextStyle(
-                                                                  fontSize: 17,
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .primaryColor
-                                                                      .withOpacity(
-                                                                          0.9))),
+                                                                  fontSize: 18),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceAround,
+                                                          children: <Widget>[
+                                                            FlatButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  voterBloc
+                                                                    ..add(Vote(
+                                                                        candidateID: state
+                                                                            .candidates[i]
+                                                                            .id));
+                                                                },
+                                                                child: Text(
+                                                                    'YES',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            17,
+                                                                        color: Theme.of(context)
+                                                                            .primaryColor
+                                                                            .withOpacity(0.9)))),
+                                                            FlatButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: Text('NO',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          17,
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .primaryColor
+                                                                          .withOpacity(
+                                                                              0.9))),
+                                                            )
+                                                          ],
                                                         )
-                                                      ],
-                                                    )
-                                                  ]),
+                                                      ]),
                                                 ),
                                               ),
                                               context: context);

@@ -117,8 +117,12 @@ class _VoterProfileState extends State<VoterProfile> {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 10.0, horizontal: 12),
                                 child: Center(
-                                    child: Text(
+                                    child: SelectableText(
+                                        
                                         state.voterProfile.address.toString(),
+                                        toolbarOptions: ToolbarOptions(
+                                          copy: true
+                                        ),
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontSize: 20,

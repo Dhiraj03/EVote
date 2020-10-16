@@ -268,6 +268,7 @@ class _AddVoterScreenState extends State<AddVoterScreen> {
                                     height: 8,
                                   ),
                                   SelectableText(
+                                      BigInt.parse(state.voters[i].delegateAddress).toInt() == 0 ? "Not delegated" : 
                                       state.voters[i].delegateAddress.toString(),
                                       enableInteractiveSelection: true,
                                       toolbarOptions: ToolbarOptions(

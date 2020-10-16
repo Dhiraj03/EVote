@@ -217,15 +217,19 @@ class ElectionDataSource {
 
   Future<Either<ErrorMessage, String>> vote(int id, String owner) async {
     Map<String, dynamic> map = {"owner": owner, "_ID": id};
-    var response = await dioClient.post(url + "/vote", data: map);
-    if (response.statusCode == 200) {
+    try {
+      var response = await dioClient.post(url + "/vote",
+          data: map,
+          options: Options(headers: {
+            "X-API-KEY": ["70d56934-be68-4b74-b402-f597cdbd41d9"]
+          }, contentType: Headers.formUrlEncodedContentType));
       return Right(response.data["data"][0]["txHash"]);
-    } else {
-      if (response.data["error"]["message"] == "DataEncodingError")
+    } catch (e) {
+      if (e.response.data["error"]["message"] == "DataEncodingError")
         return Left(
             ErrorMessage(message: "Invalid arguments. Please try again."));
       else
-        return Left(ErrorMessage(message: response.data["error"]["message"]));
+        return Left(ErrorMessage(message: e.response.data["error"]["message"]));
     }
   }
 

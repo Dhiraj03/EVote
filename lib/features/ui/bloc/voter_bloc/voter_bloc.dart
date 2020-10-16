@@ -66,6 +66,17 @@ class VoterBloc extends Bloc<VoterEvent, VoterState> {
         yield Loading();
         yield ElectionTxHash(txHash: response);
       });
+    } else if (event is Vote) {
+      String email = await userRepository.getUserEmail();
+      String ownerAddress = await repo.getVoterAddress(email);
+      final result = await dataSource.vote(event.candidateID, ownerAddress);
+      yield* result.fold((e) async* {
+        yield Loading();
+        yield VoterError(errorMessage: e);
+      }, (response) async* {
+        yield Loading();
+        yield ElectionTxHash(txHash: response);
+      });
     }
   }
 }
