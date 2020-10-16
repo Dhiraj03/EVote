@@ -45,6 +45,7 @@ class VoterBloc extends Bloc<VoterEvent, VoterState> {
     } else if (event is ShowResults) {
       final results = await dataSource.showResults();
       yield* results.fold((e) async* {
+        print('Error');
         yield VoterError(errorMessage: e);
       }, (results) async* {
         results.sort((a, b) => b.count.compareTo(a.count));

@@ -1,8 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:dartz/dartz.dart';
-import 'package:dartz/dartz_unsafe.dart';
 import 'package:dio/dio.dart';
 import 'package:e_vote/backend/errors.dart';
 import 'package:e_vote/models/candidate_model.dart';
@@ -11,7 +8,7 @@ import 'package:e_vote/models/voter_model.dart';
 class ElectionDataSource {
   var dioClient = Dio();
   String url =
-      "https://mainnet-api.maticvigil.com/v1.0/contract/0x46f245bd959a15b2e8fef518d0fdafab7bf93a45";
+      "https://mainnet-api.maticvigil.com/v1.0/contract/0xcfe9fbebc9e5bddb987ec0589f49ed307257ef6a";
   var httpClient = HttpClient();
   String adminAddress = "0xb3eb5933e5eb4b4872142cf631a3b0c686e15216";
   // fetches the address of the admin from the blockchain
@@ -97,19 +94,19 @@ class ElectionDataSource {
 
   //Fetches the results of all the candidates
   Future<Either<ErrorMessage, List<Candidate>>> showResults() async {
-      int count = await getCandidateCount();
-      var list = List<int>.generate(count, (index) => index + 1);
-      List<Candidate> result = [];
-      await Future.wait(list.map((e) async {
-        await dioClient.get(url + '/showResults/$e').then((value) {
-          result.add(Candidate.result(value.data["data"][0]));
-        });
-      }));
-      print('hah');
-      print(result.length);
-      return Right(result);
-    }
-  
+    int count = await getCandidateCount();
+    if (await getElectionState() == "CREATED")
+      return Left(ErrorMessage(message: "The election has not concluded yet."));
+    var list = List<int>.generate(count, (index) => index + 1);
+    List<Candidate> result = [];
+    await Future.wait(list.map((e) async {
+      await dioClient.get(url + '/showResults/$e').then((value) {
+        result.add(Candidate.result(value.data["data"][0]));
+      });
+    }));
+    print(result.length);
+    return Right(result);
+  }
 
   //Returns the winner of the election
   Future<Either<ErrorMessage, Candidate>> getWinner() async {

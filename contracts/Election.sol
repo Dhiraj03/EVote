@@ -5,6 +5,7 @@ pragma solidity ^0.5.0;
 contract Election {
     //Structure that represents a registered voter in the election
     struct Voter {
+        bool isRegistered;
         bool hasVoted; //Whether or not the voter has voted yet
         address delegate; // The address of the delegate that the voter has chosen (default to the voter itself)
         uint256 weight; // Weight of the Voter
@@ -23,7 +24,7 @@ contract Election {
 
     address public admin; // The address of the official/authority conducting the election
 
-    enum State {CREATED, ONGOING, STOP}
+    enum State {CREATED, ONGOING, CONCLUDED}
     /*This enum represents the state of the election -
     CREATED - The election contract has been created, voting has not begun yet
     ONGOING - The voting has begun and is currently active
@@ -47,7 +48,7 @@ contract Election {
     modifier checkIfCreated() {
         require(
             electionState == State.CREATED,
-            "The election is either ongoing or has ended."
+            "The election is either ongoing or has concluded."
         );
         _;
     }
@@ -61,12 +62,12 @@ contract Election {
     }
 
     modifier checkIfComplete() {
-        require(electionState == State.STOP, "The election has not ended yet.");
+        require(electionState == State.CONCLUDED, "The election has not concluded yet.");
         _;
     }
 
     modifier checkNotComplete() {
-        require(electionState != State.STOP, "The election has ended.");
+        require(electionState != State.CONCLUDED, "The election has concluded.");
         _;
     }
 
@@ -77,7 +78,7 @@ contract Election {
             "Voter has already voted."
         );
         require(
-            voters[owner].weight == 0,
+            voters[owner].weight > 0,
             "Voter has not been registered or already delegated their vote."
         );
         _;
@@ -104,7 +105,7 @@ contract Election {
     //modifier to check if the voter is not yet registered for the addVoter function
     modifier checkNotRegistered(address voter) {
         require(
-            !voters[voter].hasVoted && voters[voter].weight == 0,
+            !voters[voter].hasVoted && voters[voter].weight == 0 && !voters[voter].isRegistered,
             "Voter has already been registered."
         );
         _;
@@ -131,8 +132,8 @@ contract Election {
         return "CREATED";
         else if(electionState == State.ONGOING)
         return "ONGOING";
-        else if(electionState == State.STOP)
-        return "STOP";
+        else if(electionState == State.CONCLUDED)
+        return "CONCLUDED";
     }
     // To Add a candidate
     // Only admin can add and
@@ -164,6 +165,7 @@ contract Election {
         voter_count++;
         voterID[voter_count] = _voter;
         voters[_voter].weight = 1;
+        voters[_voter].isRegistered = true;
         emit AddedAVoter(_voter);
     }
 
@@ -219,9 +221,10 @@ contract Election {
         checkNotComplete
         checkIfVoterValid(owner)
         checkIfVoterValid(_delegate)
+        checkNotAdmin(_delegate)
         checkNotAdmin(owner)
     {
-        require(_delegate != owner, "self delegation is not allowed");
+        require(_delegate != owner, "Self delegation is not allowed.");
         address to = _delegate;
         while (voters[to].delegate != address(0)) {
             to = voters[to].delegate;
@@ -263,7 +266,7 @@ contract Election {
     // Setting Election state to STOP
     // by admin
     function endElection(address owner) public checkAdmin(owner) {
-        electionState = State.STOP;
+        electionState = State.CONCLUDED;
         emit ElectionEnd(electionState);
     }
 
@@ -322,4 +325,5 @@ contract Election {
             }
         }
     }
+
 }
