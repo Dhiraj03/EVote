@@ -44,15 +44,11 @@ class VoterBloc extends Bloc<VoterEvent, VoterState> {
       yield VoterProfileState(voterProfile: voterProfile, address: address);
     } else if (event is ShowResults) {
       final results = await dataSource.showResults();
-      final winner = await dataSource.getWinner();
       yield* results.fold((e) async* {
         yield VoterError(errorMessage: e);
       }, (results) async* {
-        yield* winner.fold((e) async* {
-          yield VoterError(errorMessage: e);
-        }, (response) async* {
-          yield Results(results: results, winner: response);
-        });
+        results.sort((a, b) => b.count.compareTo(a.count));
+        yield Results(results: results, winner: results[0]);
       });
     } else if (event is DelegateVote) {
       String email = await userRepository.getUserEmail();

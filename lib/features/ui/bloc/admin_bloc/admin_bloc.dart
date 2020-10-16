@@ -69,16 +69,11 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       });
     } else if (event is ShowResults) {
       final results = await dataSource.showResults();
-      final winner = await dataSource.getWinner();
       yield* results.fold((e) async* {
-        print('ERoRR');
         yield AdminError(errorMessage: e);
       }, (results) async* {
-        yield* winner.fold((e) async* {
-          yield AdminError(errorMessage: e);
-        }, (response) async* {
-          yield Results(results: results, winner: response);
-        });
+        results.sort((a, b) => b.count.compareTo(a.count));
+        yield Results(results: results, winner: results[0]);
       });
     }
   }

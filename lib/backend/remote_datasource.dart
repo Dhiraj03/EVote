@@ -86,29 +86,30 @@ class ElectionDataSource {
 
   //Fetches the result of the candidate
   Future<Either<ErrorMessage, Candidate>> showCandidateResult(int id) async {
-    var response = await dioClient.get(url + "/showResults/$id");
-    if (response.statusCode == 400) {
-      return Left(
-          ErrorMessage(message: response.data["error"]["details"]["message"]));
-    } else
+    try {
+      var response = await dioClient.get(url + "/showResults/$id");
       return Right(Candidate.result(response.data["data"][0]));
+    } catch (e) {
+      return Left(ErrorMessage(
+          message: e.response.data["error"]["details"]["message"]));
+    }
   }
 
   //Fetches the results of all the candidates
   Future<Either<ErrorMessage, List<Candidate>>> showResults() async {
-    int count = await getCandidateCount();
-    if (getElectionState() == "STOP")
-      return Left(ErrorMessage(message: "The election has not ended yet."));
-    else {
+      int count = await getCandidateCount();
+      var list = List<int>.generate(count, (index) => index + 1);
       List<Candidate> result = [];
-      for (int i = 1; i <= count; i++) {
-        dioClient.get(url + "/showResults/$i").then((response) {
-          result.add(Candidate.result(response.data["data"][0]));
+      await Future.wait(list.map((e) async {
+        await dioClient.get(url + '/showResults/$e').then((value) {
+          result.add(Candidate.result(value.data["data"][0]));
         });
-      }
+      }));
+      print('hah');
+      print(result.length);
       return Right(result);
     }
-  }
+  
 
   //Returns the winner of the election
   Future<Either<ErrorMessage, Candidate>> getWinner() async {
