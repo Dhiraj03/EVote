@@ -95,7 +95,7 @@ class ElectionDataSource {
   //Fetches the results of all the candidates
   Future<Either<ErrorMessage, List<Candidate>>> showResults() async {
     int count = await getCandidateCount();
-    if (await getElectionState() == "CREATED")
+    if (await getElectionState() != "CONCLUDED")
       return Left(ErrorMessage(message: "The election has not concluded yet."));
     var list = List<int>.generate(count, (index) => index + 1);
     List<Candidate> result = [];
@@ -136,7 +136,7 @@ class ElectionDataSource {
       return Right(response.data["data"][0]["txHash"]);
     } catch (e) {
       return Left(ErrorMessage(
-          message: "The registration period for candidates has ended."));
+          message: e.respone.data["error"]["message"]));
     }
   }
 
@@ -158,7 +158,7 @@ class ElectionDataSource {
         return Left(ErrorMessage(message: e.response.data["error"]["message"]));
       else
         return Left(ErrorMessage(
-            message: "The registration period for candidates has ended."));
+            message: e.response.data["error"]["message"]));
     }
   }
 

@@ -140,7 +140,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 12),
                           child: Center(
-                            child: Text(state.adminAddress,
+                            child: SelectableText(state.adminAddress,
+                                toolbarOptions: ToolbarOptions(
+                                  copy: true
+                                ),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 20,
