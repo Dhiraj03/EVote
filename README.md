@@ -2,6 +2,13 @@
 
 A decentralized and transparent Blockchain-based voting application, built with Flutter as the UI framework, a Solidity Smart contract as the Backend and MaticVigil Sidechain as the Database (Blockchain). 
 
+## Issues with the Current System of Voting 
+1. Voting in most democratic states and organizations all over the world has been a largely centralized activity, with immense trust and faith placed in the hands of a small number of powerful people. 
+2. Absence of a robust and secure authentication system for voters (like a biometric system).
+3. Security issues with respect to the manipulation of EVMs - Rigging in elections is a major threat to democracy.
+4. Another factor that negatively impacts the current system of Voting is the associated costs and other resources. For example, it was estimated that the Indian Lok Sabha Elections of 2019 cost $7 billion.
+5. Both Digital Voting using EVMs and the Paper Ballot system have drawbacks - reliability, verifiability and security.
+
 ## Running the Flutter App
 1. Clone the repo.
 2. Download the necessary packages required by Flutter by running `flutter pub get`.
