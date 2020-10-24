@@ -9,6 +9,16 @@ A decentralized and transparent Blockchain-based voting application, built with 
 4. Another factor that negatively impacts the current system of Voting is the associated costs and other resources. For example, it was estimated that the Indian Lok Sabha Elections of 2019 cost $7 billion.
 5. Both Digital Voting using EVMs and the Paper Ballot system have drawbacks - reliability, verifiability and security.
 
+## What is Liquid Democracy?
+
+Liquid democracy is similar to ‘delegative democracy’ which combines elements of both direct and representative democracy. 
+
+It is essentially a scalable hybrid of direct and representative democracy, each of which has its disadvantages - direct democracy is not scalable and representative democracy is not reflective of democratic ideals, which is to put power in the hands of the people.
+
+It enables people to vote directly, or assign their vote to individuals or organizations that they trust.
+
+It is being proposed in order to strengthen democracy by increasing popular participation in everyday policy making.
+
 ## Running the Flutter App
 1. Clone the repo.
 2. Download the necessary packages required by Flutter by running `flutter pub get`.
