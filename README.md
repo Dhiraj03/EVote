@@ -2,6 +2,10 @@
 
 A decentralized and transparent Blockchain-based voting application, built with Flutter as the UI framework, a Solidity Smart contract as the Backend and MaticVigil Sidechain as the Database (Blockchain). 
 
+## E-Vote Architecture Diagram
+![System Architecture](EVote_Architecture_Diagram.png)
+
+
 ## Issues with the Current System of Voting 
 1. Voting in most democratic states and organizations all over the world has been a largely centralized activity, with immense trust and faith placed in the hands of a small number of powerful people. 
 2. Absence of a robust and secure authentication system for voters (like a biometric system).
