@@ -2,6 +2,10 @@
 
 A decentralized and transparent Blockchain-based voting application, built with Flutter as the UI framework, a Solidity Smart contract as the Backend and MaticVigil Sidechain as the Database (Blockchain). 
 
+## E-Vote Architecture Diagram
+![System Architecture](EVote_Architecture_Diagram.png)
+
+
 ## Issues with the Current System of Voting 
 1. Voting in most democratic states and organizations all over the world has been a largely centralized activity, with immense trust and faith placed in the hands of a small number of powerful people. 
 2. Absence of a robust and secure authentication system for voters (like a biometric system).
@@ -23,6 +27,13 @@ It is being proposed in order to strengthen democracy by increasing popular part
 1. Clone the repo.
 2. Download the necessary packages required by Flutter by running `flutter pub get`.
 3. Run the application on an emulator (on Android Studio) or use a physical device (Enable USB Debugging on the device) by running the command `flutter run`.
+
+## Overview of Matic and reasons for its use
+
+1. The current decentralized eco-system lacks usability and convenience and transactions are slow, expensive and complex. Most blockchain applications haven’t reached a stage of mass usage due to scalability and UI issues.
+2. Matic Network is a Layer 2 scaling solution that achieves scale by utilizing side chains for off-chain computation while ensuring asset security using the Plasma framework and a DPoS validators.
+3. MaticVigil API is an API gateway on top of the Matic network EVM-compatible sidechain which enables developers to write code to interact with value transfer and transactions on Matic as if it were just talking to a normal web server REST API over HTTP.
+4. Due to the primitive stages of web3 libraries in Dart, I have chosen to use Matic to deploy and communicate with the smart contract.
 
 ## Deploying a new Smart contract to the Matic Network and running the app successfully
 
