@@ -35,6 +35,10 @@ It is being proposed in order to strengthen democracy by increasing popular part
 3. MaticVigil API is an API gateway on top of the Matic network EVM-compatible sidechain which enables developers to write code to interact with value transfer and transactions on Matic as if it were just talking to a normal web server REST API over HTTP.
 4. Due to the primitive stages of web3 libraries in Dart, I have chosen to use Matic to deploy and communicate with the smart contract.
 
+![MaticVigil](matic.png)
+
+###### Source:https://medium.com/blockvigil/maticvigil-scalable-blockchain-api-for-everyone-2bc09489e602
+
 ## Deploying a new Smart contract to the Matic Network and running the app successfully
 
 1. Start by configuring the app’s Firebase integration to your Google account - Create a new project in Firebase (https://console.firebase.google.com/u/0/ ), and integrate it with the app, enable Email-Password Authentication and Firestore Read/Write access.
