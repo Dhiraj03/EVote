@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:random_color_scheme/random_color_scheme.dart';
 import 'features/auth/presentation/bloc/auth_bloc/auth_states.dart';
 import 'features/auth/presentation/screens/Login_Screen.dart';
 import 'home_screen.dart';
