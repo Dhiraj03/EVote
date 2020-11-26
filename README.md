@@ -51,3 +51,11 @@ It is being proposed in order to strengthen democracy by increasing popular part
 5. Copy the code present in contracts/Election.sol to the online IDE and Deploy it - Enter the appropriate description and and enter the admin address entered in the previous steps as the other argument and deploy the contract.
 6. After the contract has been deployed to the Matic Network, copy the ‘Contract Address’ present on the contract dashboard and replace the existing contract address and admin address in backend/remote_datasource.dart as url and adminAddress respectively.
 7. Run the Flutter app
+
+## Screenshots of Working
+<img src="screenshots/registration_screen.jpg" width="180">&emsp;
+<img src="screenshots/login_screen.jpg" width="180">&emsp;
+<img src="screenshots/admin_dashboard_screen.jpg" width="180">&emsp;
+
+
+
