@@ -56,6 +56,18 @@ It is being proposed in order to strengthen democracy by increasing popular part
 <img src="screenshots/registration_screen.jpg" width="180">&emsp;
 <img src="screenshots/login_screen.jpg" width="180">&emsp;
 <img src="screenshots/admin_dashboard_screen.jpg" width="180">&emsp;
+<img src="screenshots/voter_dashboard_screen.jpg" width="180">&emsp;
+<img src="screenshots/add_candidate_screen.jpg" width="180">&emsp;
+<img src="screenshots/add_voter_screen.jpg" width="180">&emsp;
+<img src="screenshots/add_voter_txhash_screen.jpg" width="180">&emsp;
+<img src="screenshots/candidates_screen.jpg" width="180">&emsp;
+<img src="screenshots/voter_profile_screen.jpg" width="180">&emsp;
+<img src="screenshots/voter's_candidates_screen.jpg" width="180">&emsp;
+<img src="screenshots/voters_screen.jpg" width="180">&emsp;
+<img src="screenshots/delegate_vote_screen.jpg" width="180">&emsp;
+<img src="screenshots/election_ongoing_vote_error.jpg" width="180">&emsp;
+<img src="screenshots/ongoing_election_admin_dashboard.jpg" width="180">&emsp;
+<img src="screenshots/voter_dashboard_screen.jpg" width="180">&emsp;
 
 
 
