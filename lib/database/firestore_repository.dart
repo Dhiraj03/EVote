@@ -11,14 +11,14 @@ import 'package:web3dart/web3dart.dart';
 class FirestoreRepository {
   static final firestoreRepository = Firestore.instance;
   /*The collection that will hold all the data of the users is called 'users'.
-   Each document under the 'users' collection will reference a user.
+  Each document under the 'users' collection will reference a user.
   */
 
   //used to reference the collection of users
   final CollectionReference ref = firestoreRepository.collection('users');
   /*Function to create a document for a new user (called when a new user registers)
   ENSURE that EMAIL IS UNIQUE (If not, add UID field)
-   */
+  */
   void createNewUser(String email) {
     var privateKey = generateNewPrivateKey(Random.secure());
     var uid = ref.add(<String, dynamic>{

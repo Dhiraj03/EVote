@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:e_vote/backend/errors.dart';
 import 'package:e_vote/backend/remote_datasource.dart';

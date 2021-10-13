@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:e_vote/database/firestore_repository.dart';
 import 'package:e_vote/features/auth/data/user_repository.dart';
